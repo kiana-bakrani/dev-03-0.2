@@ -10,16 +10,15 @@
 
     <center>
         <VBox alignment="CENTER" spacing="14">
-            <Label text="RateMyStudent"
-                   style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+            <Label text="RateMyStudent" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
             <Label text="Version 0.2 — CS 151"/>
 
-            <!-- button to open YOUR define page -->
+            <!-- THIS is the button that should switch pages -->
             <Button text="Define Programming Languages"
                     onAction="#onGoToDefineLanguages"
                     prefWidth="260"/>
 
-            <!-- optional demo button you already have -->
+            <!-- just a demo button -->
             <Button text="Say Hello" onAction="#onHelloButtonClick"/>
             <Label fx:id="welcomeText" text="Welcome!" />
         </VBox>

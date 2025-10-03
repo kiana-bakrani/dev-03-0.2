@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
@@ -9,7 +9,10 @@
             prefWidth="600" prefHeight="420">
 
     <top>
-        <HBox spacing="10" alignment="CENTER_LEFT" padding="10">
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <padding>
+                <Insets topRightBottomLeft="10"/>
+            </padding>
             <Button text="← Back" onAction="#onBack"/>
             <Label text="Define Programming Languages"
                    style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
@@ -17,7 +20,10 @@
     </top>
 
     <center>
-        <GridPane hgap="10" vgap="10" padding="10">
+        <GridPane hgap="10" vgap="10">
+            <padding>
+                <Insets topRightBottomLeft="10"/>
+            </padding>
             <columnConstraints>
                 <ColumnConstraints percentWidth="25"/>
                 <ColumnConstraints percentWidth="75"/>
@@ -30,7 +36,10 @@
     </center>
 
     <bottom>
-        <VBox spacing="10" padding="10">
+        <VBox spacing="10">
+            <padding>
+                <Insets topRightBottomLeft="10"/>
+            </padding>
             <HBox spacing="10" alignment="CENTER_LEFT">
                 <Button text="Add" onAction="#onAdd"/>
                 <Button text="Save to CSV (optional)" onAction="#onSaveCSV"/>

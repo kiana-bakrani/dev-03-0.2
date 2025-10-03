@@ -19,7 +19,7 @@ public class MainController {
         }
     }
 
-    // this loads your define-languages.fxml page
+    // Loads define-languages.fxml from resources and switches the scene
     @FXML
     protected void onGoToDefineLanguages(ActionEvent e) {
         try {
@@ -28,7 +28,7 @@ public class MainController {
             Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
             stage.setScene(scene);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(); // check Run console if it still doesn't switch
             if (welcomeText != null) {
                 welcomeText.setText("Failed to open Define page.");
             }

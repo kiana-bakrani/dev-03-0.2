@@ -17,8 +17,8 @@ import java.nio.file.Path;
 
 public class DefineLanguagesController {
 
-    // In-memory list for v0.2 (persistence is optional)
-    private static final ObservableList<ProgrammingLanguage> DATA = FXCollections.observableArrayList();
+    private static final ObservableList<ProgrammingLanguage> DATA =
+            FXCollections.observableArrayList();
 
     @FXML private TextField nameField;
     @FXML private TableView<ProgrammingLanguage> table;
@@ -55,7 +55,6 @@ public class DefineLanguagesController {
         }
     }
 
-    // Optional per rubric
     @FXML
     public void onSaveCSV(ActionEvent e) {
         try {
