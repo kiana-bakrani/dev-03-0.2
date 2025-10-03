@@ -1,7 +1,12 @@
 package cs151.application;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.event.ActionEvent;
+import javafx.stage.Stage;
 
 public class MainController {
     @FXML
@@ -9,6 +14,24 @@ public class MainController {
 
     @FXML
     protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
+        if (welcomeText != null) {
+            welcomeText.setText("Welcome to RateMyStudent!");
+        }
+    }
+
+    // this loads your define-languages.fxml page
+    @FXML
+    protected void onGoToDefineLanguages(ActionEvent e) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("define-languages.fxml"));
+            Scene scene = new Scene(loader.load(), 600, 420);
+            Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            if (welcomeText != null) {
+                welcomeText.setText("Failed to open Define page.");
+            }
+        }
     }
 }

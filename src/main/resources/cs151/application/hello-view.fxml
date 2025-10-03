@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="cs151.application.MainController"
+            prefWidth="700" prefHeight="450">
 
-<?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="cs151.application.MainController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-    </padding>
+    <center>
+        <VBox alignment="CENTER" spacing="14">
+            <Label text="RateMyStudent"
+                   style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+            <Label text="Version 0.2 — CS 151"/>
 
-    <Label fx:id="welcomeText"/>
-    <Button text="Hello!" onAction="#onHelloButtonClick"/>
-</VBox>
+            <!-- button to open YOUR define page -->
+            <Button text="Define Programming Languages"
+                    onAction="#onGoToDefineLanguages"
+                    prefWidth="260"/>
+
+            <!-- optional demo button you already have -->
+            <Button text="Say Hello" onAction="#onHelloButtonClick"/>
+            <Label fx:id="welcomeText" text="Welcome!" />
+        </VBox>
+    </center>
+
+    <padding><Insets topRightBottomLeft="20"/></padding>
+</BorderPane>
