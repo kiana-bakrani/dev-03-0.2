@@ -1,5 +1,3 @@
-package cs151.application;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -7,70 +5,117 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 class DBManager {
-	static boolean storeNewProgramingLanguage(String lang) throws IOException {
-		String[] strings = getProgrammingLanguages();
-		for (String s: strings) {
-			if(lang.equals(s)) {
-				return false;
+	private static final File root = new File(System.getProperty("user.home")+"/RateMyStudent/");
+	
+	/**
+	 * Returns the root file of the database.
+	 * @return The root file your database for the app is stored in.
+	 */
+	static File getRoot() {
+		return root;
+	}
+	
+	/**
+	 * Stores a new Programming Language in the database.
+	 * You store the programming language in a csv file.
+	 * @param lang The name of the programming language.
+	 * @return Returns true if the language was stored successfully. Returns false when the language is not stored(duplicate or the file is not found).
+	 */
+	static boolean storeNewProgramingLanguage(String lang) {
+		try {
+			String[] strings = getProgrammingLanguages();
+			if(strings==null) {return false;}
+			for (String s: strings) {
+				if(lang.equals(s)) {
+					return false;
+				}
 			}
+			File f = new File(root.getAbsolutePath()+"/ProgrammingLangs/");
+			f.mkdirs();
+			int n = 1;
+			do {
+				f = new File(root.getAbsolutePath()+"/ProgrammingLangs/"+n+".csv");
+				n++;
+			} while (f.exists());
+			f.createNewFile();
+			FileWriter out = new FileWriter(f);
+			out.append(stringToCSV(lang));
+			out.flush();
+			out.close();
+			return true;
+		} catch(IOException e) {
+			return false;
 		}
-		File f = new File(System.getProperty("user.home")+"/RateMyStudent/ProgrammingLangs/");
-		f.mkdirs();
-		int n = 1;
-		do {
-			f = new File(System.getProperty("user.home")+"/RateMyStudent/ProgrammingLangs/"+n+".csv");
-			n++;
-		} while (f.exists());
-		f.createNewFile();
-		FileWriter out = new FileWriter(f);
-		out.append(stringToCSV(lang));
-		out.flush();
-		out.close();
-		return true;
 	}
 	
-	static String[] getProgrammingLanguages() throws IOException {
-		File f = new File(System.getProperty("user.home")+"/RateMyStudent/ProgrammingLangs/");
-		f.mkdirs();
-		File[] languages = f.listFiles();
-		String[] stringLanguages = new String[languages.length];
-		for (int i = 0; i < languages.length; i++) {
-			BufferedReader br = new BufferedReader(new FileReader(languages[i]));
-			stringLanguages[i]=csvToString(br.readLine());
-			br.close();
-		}
-		return stringLanguages;
-	}
-	
-	static boolean deleteProgrammingLanguage(String s) throws IOException {
-		File f = new File(System.getProperty("user.home")+"/RateMyStudent/ProgrammingLangs/");
-		f.mkdirs();
-		File[] languages = f.listFiles();
-		for (int i = 0; i < languages.length; i++) {
-			BufferedReader br = new BufferedReader(new FileReader(languages[i]));
-			if(s.equals(csvToString(br.readLine()))) {
+	/**
+	 * Gets a list of the stored Programming Languages.
+	 * @return Returns the list of stored Programming Languages. Returns null if the file is not found.
+	 */
+	static String[] getProgrammingLanguages() {
+		try {
+			File f = new File(root.getAbsolutePath()+"/ProgrammingLangs/");
+			f.mkdirs();
+			File[] languages = f.listFiles();
+			String[] stringLanguages = new String[languages.length];
+			for (int i = 0; i < languages.length; i++) {
+				BufferedReader br = new BufferedReader(new FileReader(languages[i]));
+				stringLanguages[i]=csvToString(br.readLine());
 				br.close();
-				languages[i].delete();
-				return true;
 			}
-			br.close();
+			return stringLanguages;
+		} catch(IOException e) {
+			return null;
 		}
-		return false;
 	}
 	
-	static boolean hasProgrammingLanguage(String s) throws IOException {
-		File f = new File(System.getProperty("user.home")+"/RateMyStudent/ProgrammingLangs/");
-		f.mkdirs();
-		File[] languages = f.listFiles();
-		for (int i = 0; i < languages.length; i++) {
-			BufferedReader br = new BufferedReader(new FileReader(languages[i]));
-			if(s.equals(csvToString(br.readLine()))) {
+	/**
+	 * Deletes a Programming Language from your database.
+	 * @param lang The name of the Programming Language.
+	 * @return Returns true if programming language was successfully deleted. Returns false if the file is not found.
+	 */
+	static boolean deleteProgrammingLanguage(String lang) {
+		try {
+			File f = new File(root.getAbsolutePath()+"/ProgrammingLangs/");
+			f.mkdirs();
+			File[] languages = f.listFiles();
+			for (int i = 0; i < languages.length; i++) {
+				BufferedReader br = new BufferedReader(new FileReader(languages[i]));
+				if(lang.equals(csvToString(br.readLine()))) {
+					br.close();
+					languages[i].delete();
+					return true;
+				}
 				br.close();
-				return true;
 			}
-			br.close();
+			return false;
+		} catch(IOException e) {
+			return false;
 		}
-		return false;
+	}
+	
+	/**
+	 * Checks the database to see if a programming language is stored there(case sensitive).
+	 * @param lang The name of the programming language you are checking for.
+	 * @return Returns true if the programming language was found or false otherwise.
+	 */
+	static boolean hasProgrammingLanguage(String lang) {
+		try {
+			File f = new File(root.getAbsolutePath()+"/ProgrammingLangs/");
+			f.mkdirs();
+			File[] languages = f.listFiles();
+			for (int i = 0; i < languages.length; i++) {
+				BufferedReader br = new BufferedReader(new FileReader(languages[i]));
+				if(lang.equals(csvToString(br.readLine()))) {
+					br.close();
+					return true;
+				}
+				br.close();
+			}
+			return false;
+		} catch(IOException e) {
+			return false;
+		}
 	}
 	
 	private static String csvToString(String s) {
