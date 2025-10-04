@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="openjfx.javafx.fxml" type="repository">
+    <properties maven-id="org.openjfx:javafx-fxml:25" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/openjfx/javafx-fxml/25/javafx-fxml-25.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/openjfx/javafx-fxml/25/javafx-fxml-25-mac-aarch64.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/openjfx/javafx-controls/25/javafx-controls-25.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/openjfx/javafx-controls/25/javafx-controls-25-mac-aarch64.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/openjfx/javafx-graphics/25/javafx-graphics-25.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/openjfx/javafx-graphics/25/javafx-graphics-25-mac-aarch64.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/openjfx/javafx-base/25/javafx-base-25.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/openjfx/javafx-base/25/javafx-base-25-mac-aarch64.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

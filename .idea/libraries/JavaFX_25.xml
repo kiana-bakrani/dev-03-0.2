@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="JavaFX-25">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../dev/java/zulu25.28.85-ca-fx-jdk25.0.0-macosx_x64/zulu-25.jdk/Contents/Home/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <NATIVE>
+      <root url="file://$PROJECT_DIR$/../dev/java/zulu25.28.85-ca-fx-jdk25.0.0-macosx_x64/zulu-25.jdk/Contents/Home/lib" />
+    </NATIVE>
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../dev/java/zulu25.28.85-ca-fx-jdk25.0.0-macosx_x64/zulu-25.jdk/Contents/Home/lib" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/../dev/java/zulu25.28.85-ca-fx-jdk25.0.0-macosx_x64/zulu-25.jdk/Contents/Home/lib" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/../dev/java/zulu25.28.85-ca-fx-jdk25.0.0-macosx_x64/zulu-25.jdk/Contents/Home/lib" recursive="false" type="SOURCES" />
+  </library>
+</component>

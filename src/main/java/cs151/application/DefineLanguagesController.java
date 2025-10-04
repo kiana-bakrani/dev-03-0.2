@@ -46,7 +46,7 @@ public class DefineLanguagesController {
     @FXML
     public void onBack(ActionEvent e) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("hello-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("cs151/application/hello-view.fxml"));
             Scene scene = new Scene(loader.load(), 700, 450);
             Stage stage = (Stage)((Node)e.getSource()).getScene().getWindow();
             stage.setScene(scene);
