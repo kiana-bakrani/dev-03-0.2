@@ -1,4 +1,3 @@
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -16,28 +15,21 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
-
-public class HomePage extends Application {
+public class HomePage {
 	private Stage home;
 	private Button studentProfile;
 	private Button generateReports;
 	private Button createProgLang;
 	private Button homePage;
 	
-	public static void main(String[] args) {
-		launch(args);
+	public Stage getStage() {
+		return home;
 	}
-
-	@Override
-	public void start(Stage arg0) throws Exception {
-		openHomePage();
-	}
-	
 	/**
 	 * Creates the HomePage.
 	 */
-	public void openHomePage() {
-		home = new Stage();
+	public void openHomePage(Stage s) {
+		home = s;
 		BorderPane border = new BorderPane();
 		Scene sc = new Scene(border);
 		VBox menu = new VBox();
@@ -82,7 +74,8 @@ public class HomePage extends Application {
 		createProgLang.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				
+				Scene ne = new Scene(new Button("hello"));
+				home.setScene(ne);
 			}
 		});
 		homePage.setTextAlignment(TextAlignment.CENTER);
