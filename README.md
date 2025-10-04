@@ -2,13 +2,17 @@
 # Version: 0.2
 
 # who did what:
-1. Kiana Bakrani
-2. Aishwarya Krupashankar 
-3. Curtis 
-3. Maili Malabey
+1. Kiana Bakrani - Defining Programming Languages & Home Page 
+2. Aishwarya Krupashankar - ReadMe files and comments on code 
+3. Curtis Zhang - Database Manager Class & Home Page 
+3. Maili Malabey - Final review and submission
 
 
-# Any other instruction that users need to know:
+# Any other instruction that users need to know: N/A
+
+
+
+
 
 
 
