@@ -26,7 +26,11 @@ public class Main extends Application {
     private Button generateReports;
     private Button createProgLang;
     private Button homePage;
-
+    public static Main INSTANCE;
+    @Override
+    public void init() {
+        INSTANCE = this;
+    }
     @Override
     public void start(Stage stage) throws Exception {
         this.home = stage;
