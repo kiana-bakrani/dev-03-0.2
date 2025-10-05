@@ -12,9 +12,15 @@ public class ProgrammingLanguage {
     }
 
     //getter that returns name of programming language
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
     //setter that sets the name of programming language
-    public void setName(String name) { this.name = name; }
+    public void setName(String name) {
+        this.name = name;
+    }
     //returns a string representation of the programming language
-    @Override public String toString() { return name; }
+    @Override public String toString() {
+        return name;
+    }
 }
