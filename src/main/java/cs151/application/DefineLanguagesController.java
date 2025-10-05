@@ -16,21 +16,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class DefineLanguagesController {
-
+    //List of programming languages
     private static final ObservableList<ProgrammingLanguage> DATA =
             FXCollections.observableArrayList();
-
+    //UserInterface componnets like textboxs and display tables
     @FXML private TextField nameField;
     @FXML private TableView<ProgrammingLanguage> table;
     @FXML private TableColumn<ProgrammingLanguage, String> nameCol;
     @FXML private Label statusLabel;
-
+    //table setup
     @FXML
     public void initialize() {
         nameCol.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName()));
         table.setItems(DATA);
     }
-
+    //the add button mechanism
     @FXML
     public void onAdd(ActionEvent e) {
         String name = nameField.getText().trim();
@@ -42,7 +42,7 @@ public class DefineLanguagesController {
         nameField.clear();
         statusLabel.setText("Added: " + name);
     }
-
+    //back button function
     @FXML
     public void onBack(ActionEvent e) {
         try {
@@ -54,7 +54,7 @@ public class DefineLanguagesController {
             if (statusLabel != null) statusLabel.setText("Back failed.");
         }
     }
-
+    //save button function
     @FXML
     public void onSaveCSV(ActionEvent e) {
         try {
@@ -72,6 +72,6 @@ public class DefineLanguagesController {
             statusLabel.setText("Save failed: " + ex.getMessage());
         }
     }
-
+    //for saving correctly in CSV
     private static String esc(String s) { return s == null ? "" : s.replace("\"", "\"\""); }
 }
