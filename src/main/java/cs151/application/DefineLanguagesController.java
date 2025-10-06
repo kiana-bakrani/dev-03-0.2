@@ -46,7 +46,7 @@ public class DefineLanguagesController {
     @FXML
     public void onBack(ActionEvent e) {
         try {
-            Main.INSTANCE.openHomePage();  // ✅ go back to Java-built Home
+            Main.INSTANCE.openHomePage();
         } catch (Exception ex) {
             ex.printStackTrace();
             if (statusLabel != null) statusLabel.setText("Back failed.");
