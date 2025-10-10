@@ -24,11 +24,35 @@ public class DefineLanguagesController {
     @FXML private TableView<ProgrammingLanguage> table;
     @FXML private TableColumn<ProgrammingLanguage, String> nameCol;
     @FXML private Label statusLabel;
-    //table setup
+     //table setup
     @FXML
     public void initialize() {
         nameCol.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName()));
         table.setItems(DATA);
+        // lets you edit table columns
+        table.setEditable(true);
+        nameCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        nameCol.setOnEditCommit(event -> {
+            ProgrammingLanguage pl = event.getRowValue();
+            pl.setName(event.getNewValue());
+            table.refresh();
+            statusLabel.setText("Edited: " + event.getNewValue());
+        });
+        // when you press delete key it will remove rows!
+        table.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.DELETE) {
+                ProgrammingLanguage selected = table.getSelectionModel().getSelectedItem();
+                if (selected != null) {
+                    DATA.remove(selected);
+                    statusLabel.setText("Deleted: " + selected.getName());
+                }
+            }
+        });
+        // sorts alphabetically  
+        nameCol.setSortType(TableColumn.SortType.DESCENDING);
+        table.getSortOrder().add(nameCol);
+        table.sort();  
+        loadCSV(); // load saved data to csv
     }
     //the add button mechanism
     @FXML
