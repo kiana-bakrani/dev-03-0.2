@@ -54,7 +54,7 @@ public class Main extends Application {
         Label homePageTitle = new Label("Home Page");
         Font titleSize = new Font(25);
         StackPane stack = new StackPane();
-        Rectangle background = new Rectangle(180, 315, Color.CYAN);
+        Rectangle background = new Rectangle(180, 315, Color.web("#d7ddfe"));
         VBox buttonList = new VBox();
         studentProfile = new Button("Student Profile");
         generateReports = new Button("Generate Reports");
@@ -129,4 +129,5 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
 }
