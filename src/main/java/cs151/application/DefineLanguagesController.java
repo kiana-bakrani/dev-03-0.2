@@ -5,68 +5,88 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
-
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.KeyCode;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class DefineLanguagesController {
-    //List of programming languages
-    private static final ObservableList<ProgrammingLanguage> DATA =
-            FXCollections.observableArrayList();
-    //UserInterface componnets like textboxs and display tables
+
+    private static final ObservableList<ProgrammingLanguage> DATA = FXCollections.observableArrayList();
+
     @FXML private TextField nameField;
     @FXML private TableView<ProgrammingLanguage> table;
     @FXML private TableColumn<ProgrammingLanguage, String> nameCol;
     @FXML private Label statusLabel;
-     //table setup
+
     @FXML
     public void initialize() {
+        // bind column → model
         nameCol.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getName()));
         table.setItems(DATA);
-        // lets you edit table columns
+
+        // inline edit support
         table.setEditable(true);
         nameCol.setCellFactory(TextFieldTableCell.forTableColumn());
-        nameCol.setOnEditCommit(event -> {
-            ProgrammingLanguage pl = event.getRowValue();
-            pl.setName(event.getNewValue());
+        nameCol.setOnEditCommit(evt -> {
+            String newVal = evt.getNewValue() == null ? "" : evt.getNewValue().trim();
+            if (newVal.isEmpty()) {
+                // reject empty rename
+                if (statusLabel != null) statusLabel.setText("Name cannot be empty.");
+                table.refresh();
+                return;
+            }
+            if (existsByName(newVal)) {
+                if (statusLabel != null) statusLabel.setText("Duplicate: '" + newVal + "' already exists.");
+                table.refresh();
+                return;
+            }
+            ProgrammingLanguage pl = evt.getRowValue();
+            pl.setName(newVal);
             table.refresh();
-            statusLabel.setText("Edited: " + event.getNewValue());
+            if (statusLabel != null) statusLabel.setText("Edited: " + newVal);
+            sortByName();
         });
-        // when you press delete key it will remove rows!
-        table.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.DELETE) {
+
+        // delete row on DEL key
+        table.setOnKeyPressed(evt -> {
+            if (evt.getCode() == KeyCode.DELETE) {
                 ProgrammingLanguage selected = table.getSelectionModel().getSelectedItem();
                 if (selected != null) {
                     DATA.remove(selected);
-                    statusLabel.setText("Deleted: " + selected.getName());
+                    if (statusLabel != null) statusLabel.setText("Deleted: " + selected.getName());
                 }
             }
         });
-        // sorts alphabetically  
-        nameCol.setSortType(TableColumn.SortType.DESCENDING);
-        table.getSortOrder().add(nameCol);
-        table.sort();  
-        loadCSV(); // load saved data to csv
+
+        // default sort: A→Z
+        nameCol.setSortType(TableColumn.SortType.ASCENDING);
+        table.getSortOrder().setAll(nameCol);
+
+        // load from CSV if present
+        loadCSV();
+        sortByName(); // ensure sorted after load
     }
-    //the add button mechanism
+
     @FXML
     public void onAdd(ActionEvent e) {
-        String name = nameField.getText().trim();
+        String name = nameField.getText() == null ? "" : nameField.getText().trim();
         if (name.isEmpty()) {
-            statusLabel.setText("Name is required.");
+            if (statusLabel != null) statusLabel.setText("Name is required.");
+            return;
+        }
+        if (existsByName(name)) {
+            if (statusLabel != null) statusLabel.setText("Duplicate: '" + name + "' already exists.");
             return;
         }
         DATA.add(new ProgrammingLanguage(name));
         nameField.clear();
-        statusLabel.setText("Added: " + name);
+        if (statusLabel != null) statusLabel.setText("Added: " + name);
+        sortByName();
     }
-    //back button function
+
     @FXML
     public void onBack(ActionEvent e) {
         try {
@@ -76,7 +96,7 @@ public class DefineLanguagesController {
             if (statusLabel != null) statusLabel.setText("Back failed.");
         }
     }
-    //save button function
+
     @FXML
     public void onSaveCSV(ActionEvent e) {
         try {
@@ -89,11 +109,47 @@ public class DefineLanguagesController {
                     out.printf("\"%s\"%n", esc(pl.getName()));
                 }
             }
-            statusLabel.setText("Saved: " + file.getPath());
+            if (statusLabel != null) statusLabel.setText("Saved: " + file.getPath());
         } catch (IOException ex) {
-            statusLabel.setText("Save failed: " + ex.getMessage());
+            if (statusLabel != null) statusLabel.setText("Save failed: " + ex.getMessage());
         }
     }
-    //for saving correctly in CSV
+
+    /* ---------- helpers ---------- */
+
+    private void loadCSV() {
+        Path file = Path.of("data", "programming_languages.csv");
+        if (!Files.exists(file)) return;
+        try (BufferedReader br = Files.newBufferedReader(file)) {
+            DATA.clear();                 // ← avoid duplicates across runs
+            String line = br.readLine();  // skip header
+            while ((line = br.readLine()) != null) {
+                String name = line.replaceAll("^\"|\"$", "").replace("\"\"", "\"").trim();
+                if (!name.isEmpty() && !existsByName(name)) {
+                    DATA.add(new ProgrammingLanguage(name));
+                }
+            }
+            if (statusLabel != null) statusLabel.setText("Loaded existing CSV");
+        } catch (IOException ex) {
+            if (statusLabel != null) statusLabel.setText("Load failed: " + ex.getMessage());
+        }
+    }
+
+    private boolean existsByName(String n) {
+        String needle = n.trim().toLowerCase();
+        return DATA.stream().anyMatch(pl -> {
+            String s = pl.getName();
+            return s != null && s.trim().toLowerCase().equals(needle);
+        });
+    }
+
+    private void sortByName() {
+        if (!table.getSortOrder().contains(nameCol)) {
+            table.getSortOrder().add(nameCol);
+        }
+        nameCol.setSortType(TableColumn.SortType.ASCENDING);
+        table.sort();
+    }
+
     private static String esc(String s) { return s == null ? "" : s.replace("\"", "\"\""); }
 }
