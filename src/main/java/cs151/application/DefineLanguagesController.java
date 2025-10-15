@@ -61,6 +61,7 @@ public class DefineLanguagesController {
             }
         });
 
+        nameCol.setComparator(String::compareToIgnoreCase);
         // default sort: A→Z
         nameCol.setSortType(TableColumn.SortType.ASCENDING);
         table.getSortOrder().setAll(nameCol);
