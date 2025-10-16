@@ -42,7 +42,6 @@
             </padding>
             <HBox spacing="10" alignment="CENTER_LEFT">
                 <Button text="Add" onAction="#onAdd"/>
-                <Button text="Save to CSV (optional)" onAction="#onSaveCSV"/>
                 <Label fx:id="statusLabel" textFill="#555"/>
             </HBox>
             <TableView fx:id="table" prefHeight="220">

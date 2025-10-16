@@ -1,8 +1,8 @@
+
 package cs151.application;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -27,10 +27,12 @@ public class Main extends Application {
     private Button createProgLang;
     private Button homePage;
     public static Main INSTANCE;
+
     @Override
     public void init() {
         INSTANCE = this;
     }
+
     @Override
     public void start(Stage stage) throws Exception {
         this.home = stage;
@@ -45,12 +47,14 @@ public class Main extends Application {
         Scene sc = new Scene(border);
         VBox menu = new VBox();
         HBox title = new HBox();
-        Image logo   = new Image(getClass().getResource("/images/logo.png").toExternalForm());
+
+        Image logo = new Image(getClass().getResource("/images/logo.png").toExternalForm());
         ImageView logoView = new ImageView(logo);
-        Image house  = new Image(getClass().getResource("/images/House.png").toExternalForm());
+        Image house = new Image(getClass().getResource("/images/House.png").toExternalForm());
         ImageView houseView = new ImageView(house);
         Image navBar = new Image(getClass().getResource("/images/NavigationBar.png").toExternalForm());
         ImageView navBarView = new ImageView(navBar);
+
         Label homePageTitle = new Label("Home Page");
         Font titleSize = new Font(25);
         StackPane stack = new StackPane();
@@ -82,16 +86,12 @@ public class Main extends Application {
         studentProfile.setTextAlignment(TextAlignment.CENTER);
         generateReports.setTextAlignment(TextAlignment.CENTER);
         createProgLang.setTextAlignment(TextAlignment.CENTER);
-
-        // FIXED: Add action handler to open Define Languages page
-        createProgLang.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent arg0) {
-                openDefineLanguagesPage();
-            }
-        });
-
         homePage.setTextAlignment(TextAlignment.CENTER);
+
+        // When user clicks "Define Programming Languages"
+        createProgLang.setOnAction((ActionEvent e) -> {
+            openDefineLanguagesPage();
+        });
 
         buttonList.getChildren().addAll(studentProfile, generateReports, createProgLang, homePage);
         buttonList.setSpacing(30);
@@ -114,12 +114,16 @@ public class Main extends Application {
     /**
      * Opens the Define Programming Languages page using FXML
      */
-    private void openDefineLanguagesPage() {
+    public void openDefineLanguagesPage() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/cs151/application/define-languages.fxml"));
             Scene scene = new Scene(loader.load(), 600, 420);
             home.setScene(scene);
             home.setTitle("Define Programming Languages");
+
+            // Add back button handling
+            cs151.application.DefineLanguagesController controller = loader.getController();
+            controller.setOnBack(() -> openHomePage());
         } catch (Exception ex) {
             ex.printStackTrace();
             System.err.println("Error loading Define Languages page: " + ex.getMessage());
@@ -129,5 +133,4 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
 }
