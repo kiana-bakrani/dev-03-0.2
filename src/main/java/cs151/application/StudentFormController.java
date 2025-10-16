@@ -38,7 +38,7 @@ public class StudentFormController {
         databasesList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         databasesList.setItems(FXCollections.observableArrayList("MySQL","Postgres","MongoDB"));
 
-        // Languages (load from your existing CSV)
+        // Languages (load from existing CSV)
         languagesList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         languagesList.setItems(FXCollections.observableArrayList(loadLanguages()));
 
@@ -56,7 +56,6 @@ public class StudentFormController {
         if (!Files.exists(path)) return List.of();
         try {
             List<String> lines = Files.readAllLines(path);
-            // if your CSV is one-name-per-line, this is fine; adjust if needed
             return lines.stream().map(String::trim).filter(s -> !s.isEmpty()).toList();
         } catch (IOException e) {
             statusLabel.setText("Could not load languages.");
