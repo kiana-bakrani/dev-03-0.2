@@ -1,4 +1,3 @@
-
 package cs151.application;
 
 import javafx.application.Application;
@@ -89,9 +88,13 @@ public class Main extends Application {
         homePage.setTextAlignment(TextAlignment.CENTER);
 
         // When user clicks "Define Programming Languages"
-        createProgLang.setOnAction((ActionEvent e) -> {
-            openDefineLanguagesPage();
-        });
+        createProgLang.setOnAction((ActionEvent e) -> openDefineLanguagesPage());
+
+        // When user clicks "Student Profile"
+        studentProfile.setOnAction((ActionEvent e) -> openStudentFormPage());
+
+        // Optional: Home button goes back to Home
+        homePage.setOnAction((ActionEvent e) -> openHomePage());
 
         buttonList.getChildren().addAll(studentProfile, generateReports, createProgLang, homePage);
         buttonList.setSpacing(30);
@@ -123,10 +126,27 @@ public class Main extends Application {
 
             // Add back button handling
             cs151.application.DefineLanguagesController controller = loader.getController();
-            controller.setOnBack(() -> openHomePage());
+            controller.setOnBack(this::openHomePage);
         } catch (Exception ex) {
             ex.printStackTrace();
             System.err.println("Error loading Define Languages page: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * Opens the Student Profile form page using FXML
+     */
+    public void openStudentFormPage() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/cs151/application/student-form.fxml"));
+            Scene scene = new Scene(loader.load(), 600, 420);
+            home.setScene(scene);
+            home.setTitle("Define Student Profile");
+
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.err.println("Error loading Student Profile page: " + ex.getMessage());
         }
     }
 
