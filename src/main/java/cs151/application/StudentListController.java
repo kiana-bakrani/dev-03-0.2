@@ -2,14 +2,14 @@ package cs151.application;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.io.IOException;
-import java.nio.file.*;
-import java.time.Year;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
 
 public class StudentListController {
     @FXML private TableView<Student> StudentsList;
@@ -22,55 +22,47 @@ public class StudentListController {
     @FXML private TableColumn<Student, String> LanguagesColumn;
     @FXML private TableColumn<Student, String> BlackListColumn;
     @FXML private Button backBtn;
-    @FXML private Label statusLabel;
 
     private final StudentRepositoryCsv repo = new StudentRepositoryCsv();
 
     @FXML
     public void initialize() {
-        ObservableList<Student> students = loadStudents();
-        StudentsList.setItems(students);
-        NameColumn.setCellValueFactory(new PropertyValueFactory("fullName"));
-        YearColumn.setCellValueFactory(new PropertyValueFactory("academicStatus"));
-        WorkplaceColumn.setCellValueFactory(new PropertyValueFactory("jobDetails"));
-        RoleColumn.setCellValueFactory(new PropertyValueFactory("preferredRole"));
-        BlackListColumn.setCellValueFactory(new PropertyValueFactory("blackList"));
-        EmploymentColumn.setCellValueFactory(new PropertyValueFactory("employment"));
-        LanguagesColumn.setCellValueFactory(new PropertyValueFactory("ProgLang"));
-        DatabasesColumn.setCellValueFactory(new PropertyValueFactory("database"));
-        backBtn.setOnAction(e -> goBack());
-        
+        // Match columns to Student getters
+        NameColumn.setCellValueFactory(new PropertyValueFactory<>("fullName"));
+        YearColumn.setCellValueFactory(new PropertyValueFactory<>("academicStatus"));
+        WorkplaceColumn.setCellValueFactory(new PropertyValueFactory<>("jobDetails"));
+        RoleColumn.setCellValueFactory(new PropertyValueFactory<>("preferredRole"));
+
+        // "true"/"false" string fields
+        EmploymentColumn.setCellValueFactory(new PropertyValueFactory<>("employment"));
+        BlackListColumn.setCellValueFactory(new PropertyValueFactory<>("blackList"));
+
+        // Display strings for lists
+        LanguagesColumn.setCellValueFactory(new PropertyValueFactory<>("progLang"));
+        DatabasesColumn.setCellValueFactory(new PropertyValueFactory<>("database"));
+
+        ObservableList<Student> base = loadStudents();
+
+        // Sort A→Z by name
+        NameColumn.setComparator(String::compareToIgnoreCase);
+        SortedList<Student> sorted = new SortedList<>(base);
+        sorted.setComparator(Comparator.comparing(
+                s -> s.getFullName() == null ? "" : s.getFullName(),
+                String::compareToIgnoreCase));
+
+        StudentsList.setItems(sorted);
+        StudentsList.setPlaceholder(new Label("No students saved yet."));
+
+        backBtn.setOnAction(e -> Main.INSTANCE.openHomePage());
     }
 
     private ObservableList<Student> loadStudents() {
         try {
-            return repo.loadAll();
-        } catch(IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private List<String> loadLanguages() {
-        Path path = Paths.get("data/programming_languages.csv");
-        if (!Files.exists(path)) return List.of();
-        try {
-            List<String> lines = Files.readAllLines(path);
-            return lines.stream().map(String::trim).filter(s -> !s.isEmpty()).toList();
+            List<Student> all = repo.loadAll();
+            return FXCollections.observableArrayList(all);
         } catch (IOException e) {
-            statusLabel.setText("Could not load languages.");
-            return List.of();
+            e.printStackTrace();
+            return FXCollections.observableArrayList();
         }
-    }
-
-    private void clearList() {
-        StudentsList.getColumns().clear();
-    }
-
-    private void goBack() {
-        // simple: rebuild home page via your Main instance
-        clearList();
-        Main.INSTANCE.openHomePage();
     }
 }
-
