@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
 <VBox spacing="12" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
       fx:controller="cs151.application.StudentFormController" prefWidth="800" prefHeight="500">
     <Label text="Define Student Profile" style="-fx-font-size:18;"/>
@@ -27,11 +28,23 @@
         <Label text="Job Details:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
         <TextField fx:id="jobDetailsField" disable="true" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
-        <Label text="Programming Languages &#xD;(ctrl+click to multiselect):" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-        <ListView fx:id="languagesList" prefHeight="80" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+        <Label text="Programming Languages:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <ScrollPane fitToWidth="true" prefHeight="120" prefWidth="300"
+                    hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                    GridPane.rowIndex="4" GridPane.columnIndex="1">
+            <content>
+                <VBox fx:id="languagesBox" spacing="5">
+                    <padding>
+                        <Insets top="5" right="5" bottom="5" left="5"/>
+                    </padding>
+                </VBox>
+            </content>
+        </ScrollPane>
 
-        <Label text="Databases &#xD;(ctrl+click to multiselect):" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-        <ListView fx:id="databasesList" prefHeight="80" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+
+        <Label text="Databases:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+        <VBox fx:id="databasesBox" prefHeight="80" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
 
         <Label text="Preferred Role:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
         <ComboBox fx:id="roleCombo" GridPane.rowIndex="6" GridPane.columnIndex="1"/>

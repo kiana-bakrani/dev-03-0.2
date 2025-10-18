@@ -3,6 +3,9 @@ package cs151.application;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
+import javafx.scene.Node;
+
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -12,7 +15,7 @@ public class StudentFormController {
     @FXML private TextField fullNameField, jobDetailsField;
     @FXML private ComboBox<String> statusCombo, roleCombo;
     @FXML private RadioButton employedYes, employedNo;
-    @FXML private ListView<String> languagesList, databasesList;
+    @FXML private VBox languagesBox, databasesBox;
     @FXML private CheckBox whitelistCheck, blacklistCheck;
     @FXML private TextArea commentArea;
     @FXML private Button saveBtn, backBtn;
@@ -38,12 +41,19 @@ public class StudentFormController {
         roleCombo.setItems(FXCollections.observableArrayList("Front-End","Back-End","Full-Stack","Data","Other"));
 
         // Databases (hard-coded)
-        databasesList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        databasesList.setItems(FXCollections.observableArrayList("MySQL","Postgres","MongoDB"));
+        List<String> dbOptions = List.of("MySQL", "Postgres", "MongoDB");
+        for (String db : dbOptions) {
+            CheckBox cb = new CheckBox(db);
+            databasesBox.getChildren().add(cb);
+        }
+
 
         // Languages (load from CSV)
-        languagesList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        languagesList.setItems(FXCollections.observableArrayList(loadLanguages()));
+        for (String lang : loadLanguages()) {
+            CheckBox cb = new CheckBox(lang);
+            languagesBox.getChildren().add(cb);
+        }
+
 
         // WL/BL mutual exclusivity
         whitelistCheck.selectedProperty().addListener((obs, oldV, on) -> { if (on) blacklistCheck.setSelected(false); });
@@ -59,7 +69,7 @@ public class StudentFormController {
         if (!Files.exists(path)) return List.of();
         try {
             List<String> lines = Files.readAllLines(path);
-            return lines.stream().map(String::trim).filter(s -> !s.isEmpty()).toList();
+            return lines.stream().skip(1).map(String::trim).filter(s -> !s.isEmpty()).toList();
         } catch (IOException e) {
             if (statusLabel != null) statusLabel.setText("Could not load languages.");
             return List.of();
@@ -98,8 +108,23 @@ public class StudentFormController {
             s.setAcademicStatus(statusCombo.getValue());
             s.setEmployed(employed);
             s.setJobDetails(jobDetailsField.getText() == null ? "" : jobDetailsField.getText().trim());
-            s.setProgrammingLanguages(new ArrayList<>(languagesList.getSelectionModel().getSelectedItems()));
-            s.setDatabases(new ArrayList<>(databasesList.getSelectionModel().getSelectedItems()));
+            List<String> selectedLangs = new ArrayList<>();
+            for (Node n : languagesBox.getChildren()) {
+                if (n instanceof CheckBox cb && cb.isSelected()) {
+                    selectedLangs.add(cb.getText());
+                }
+            }
+
+            List<String> selectedDBs = new ArrayList<>();
+            for (Node n : databasesBox.getChildren()) {
+                if (n instanceof CheckBox cb && cb.isSelected()) {
+                    selectedDBs.add(cb.getText());
+                }
+            }
+
+            s.setProgrammingLanguages(selectedLangs);
+            s.setDatabases(selectedDBs);
+
             s.setPreferredRole(roleCombo.getValue());
 
             // ✅ Save blacklist correctly (whitelist => blacklist=false)
@@ -125,13 +150,19 @@ public class StudentFormController {
         employedNo.setSelected(true);
         jobDetailsField.clear();
         jobDetailsField.setDisable(true);
-        languagesList.getSelectionModel().clearSelection();
-        databasesList.getSelectionModel().clearSelection();
         roleCombo.getSelectionModel().clearSelection();
         whitelistCheck.setSelected(false);
         blacklistCheck.setSelected(false);
         commentArea.clear();
+
+        for (Node n : languagesBox.getChildren()) {
+            if (n instanceof CheckBox cb) cb.setSelected(false);
+        }
+        for (Node n : databasesBox.getChildren()) {
+            if (n instanceof CheckBox cb) cb.setSelected(false);
+        }
     }
+
 
     private void goBack() {
         Main.INSTANCE.openHomePage();
