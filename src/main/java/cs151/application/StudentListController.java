@@ -1,11 +1,14 @@
 package cs151.application;
 
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.io.IOException;
+import java.util.Comparator;
+import java.util.List;
 
 public class StudentListController {
     // variables from the FXML File
@@ -24,44 +27,43 @@ public class StudentListController {
 
     @FXML
     public void initialize() {
-        // Sets the TableView's contents to a list of students
-        ObservableList<Student> students = loadStudents();
-        StudentsList.setItems(students);
+        // Match columns to Student getters
+        NameColumn.setCellValueFactory(new PropertyValueFactory<>("fullName"));
+        YearColumn.setCellValueFactory(new PropertyValueFactory<>("academicStatus"));
+        WorkplaceColumn.setCellValueFactory(new PropertyValueFactory<>("jobDetails"));
+        RoleColumn.setCellValueFactory(new PropertyValueFactory<>("preferredRole"));
 
-        // Sets each individual column of the TableView to a certain variable of the Student
-        NameColumn.setCellValueFactory(new PropertyValueFactory<Student, String>("fullName"));
-        YearColumn.setCellValueFactory(new PropertyValueFactory<Student, String>("academicStatus"));
-        WorkplaceColumn.setCellValueFactory(new PropertyValueFactory<Student, String>("jobDetails"));
-        RoleColumn.setCellValueFactory(new PropertyValueFactory<Student, String>("preferredRole"));
-        BlackListColumn.setCellValueFactory(new PropertyValueFactory<Student, String>("blackList"));
-        EmploymentColumn.setCellValueFactory(new PropertyValueFactory<Student, String>("employment"));
-        LanguagesColumn.setCellValueFactory(new PropertyValueFactory<Student, String>("ProgLang"));
-        DatabasesColumn.setCellValueFactory(new PropertyValueFactory<Student, String>("database"));
-        
-        // Back Button
-        backBtn.setOnAction(e -> goBack());
-        
+        // "true"/"false" string fields
+        EmploymentColumn.setCellValueFactory(new PropertyValueFactory<>("employment"));
+        BlackListColumn.setCellValueFactory(new PropertyValueFactory<>("blackList"));
+
+        // Display strings for lists
+        LanguagesColumn.setCellValueFactory(new PropertyValueFactory<>("progLang"));
+        DatabasesColumn.setCellValueFactory(new PropertyValueFactory<>("database"));
+
+        ObservableList<Student> base = loadStudents();
+
+        // Sort A→Z by name
+        NameColumn.setComparator(String::compareToIgnoreCase);
+        SortedList<Student> sorted = new SortedList<>(base);
+        sorted.setComparator(Comparator.comparing(
+                s -> s.getFullName() == null ? "" : s.getFullName(),
+                String::compareToIgnoreCase));
+
+        StudentsList.setItems(sorted);
+        StudentsList.setPlaceholder(new Label("No students saved yet."));
+
+        backBtn.setOnAction(e -> Main.INSTANCE.openHomePage());
     }
 
     private ObservableList<Student> loadStudents() {
         // Gets the list of students
         try {
-            return repo.loadAll();
-        } catch(IOException e) {
+            List<Student> all = repo.loadAll();
+            return FXCollections.observableArrayList(all);
+        } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return FXCollections.observableArrayList();
         }
     }
-
-    private void clearList() {
-        // Clears the list of students
-        StudentsList.getColumns().clear();
-    }
-
-    private void goBack() {
-        // simple: rebuild home page via your Main instance
-        clearList();
-        Main.INSTANCE.openHomePage();
-    }
 }
-

@@ -2,13 +2,14 @@
 # Version: 0.2
 
 # who did what:
-1. Kiana Bakrani - Defining Programming Languages & Home Page 
+1. Kiana Bakrani - Created Student, StudentFormController, StudentRepositoryCsv,and the related fxml file 
 2. Aishwarya Krupashankar - Populated 3 and only 3 Programming Languages, took away the save to .csv button, and now saves automatically  
-3. Curtis Zhang - Database Manager Class & Home Page 
-3. Maili Malabey - Alphabetical Order of the languages
+3. Curtis Zhang - Created StudentListController and related fxml + debugging
+3. Maili Malabey - 
 
 
 # Any other instruction that users need to know: N/A
+
 
 
 
