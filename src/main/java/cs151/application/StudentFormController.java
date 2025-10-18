@@ -3,7 +3,6 @@ package cs151.application;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -71,6 +70,7 @@ public class StudentFormController {
             if (statusCombo.getValue() == null) { statusLabel.setText("Pick academic status."); return; }
             boolean employed = employedYes.isSelected();
             if (employed && jobDetailsField.getText().trim().isEmpty()) { statusLabel.setText("Job details required."); return; }
+            if(!whitelistCheck.isSelected()&&!blacklistCheck.isSelected()){ statusLabel.setText("Has to be either WhiteListed or BlackListed."); return; }
 
             // Duplicate prevention by trimmed full name (case-insensitive)
             if (repo.loadAll().stream().anyMatch(s -> s.getFullName().trim().equalsIgnoreCase(name))) {
@@ -87,8 +87,7 @@ public class StudentFormController {
             s.setProgrammingLanguages(new ArrayList<>(languagesList.getSelectionModel().getSelectedItems()));
             s.setDatabases(new ArrayList<>(databasesList.getSelectionModel().getSelectedItems()));
             s.setPreferredRole(roleCombo.getValue());
-            s.setWhitelist(whitelistCheck.isSelected());
-            s.setBlacklist(blacklistCheck.isSelected());
+            s.setBlacklist(whitelistCheck.isSelected());
             if (!commentArea.getText().isBlank()) s.addComment(commentArea.getText().trim());
 
             // Save

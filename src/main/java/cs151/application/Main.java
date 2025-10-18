@@ -21,7 +21,8 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
     private Stage home;
-    private Button studentProfile;
+    private Button newStudentProfile;
+    private Button studentProfiles;
     private Button generateReports;
     private Button createProgLang;
     private Button homePage;
@@ -59,7 +60,8 @@ public class Main extends Application {
         StackPane stack = new StackPane();
         Rectangle background = new Rectangle(180, 315, Color.web("#d7ddfe"));
         VBox buttonList = new VBox();
-        studentProfile = new Button("Student Profile");
+        newStudentProfile = new Button("New Student Profile");
+        studentProfiles = new Button("View Student Profiles");
         generateReports = new Button("Generate Reports");
         createProgLang = new Button("Define Programming\nLanguages");
         homePage = new Button("Home Page");
@@ -82,7 +84,8 @@ public class Main extends Application {
         stack.getChildren().addAll(background, buttonList);
         stack.setAlignment(Pos.CENTER);
 
-        studentProfile.setTextAlignment(TextAlignment.CENTER);
+        newStudentProfile.setTextAlignment(TextAlignment.CENTER);
+        studentProfiles.setTextAlignment(TextAlignment.CENTER);
         generateReports.setTextAlignment(TextAlignment.CENTER);
         createProgLang.setTextAlignment(TextAlignment.CENTER);
         homePage.setTextAlignment(TextAlignment.CENTER);
@@ -90,13 +93,16 @@ public class Main extends Application {
         // When user clicks "Define Programming Languages"
         createProgLang.setOnAction((ActionEvent e) -> openDefineLanguagesPage());
 
-        // When user clicks "Student Profile"
-        studentProfile.setOnAction((ActionEvent e) -> openStudentFormPage());
+        // When user clicks "New Student Profile"
+        newStudentProfile.setOnAction((ActionEvent e) -> openStudentFormPage());
+
+        // When user clicks "View Student Profiles"
+        studentProfiles.setOnAction((ActionEvent e) -> openStudentsListPage());
 
         // Optional: Home button goes back to Home
         homePage.setOnAction((ActionEvent e) -> openHomePage());
 
-        buttonList.getChildren().addAll(studentProfile, generateReports, createProgLang, homePage);
+        buttonList.getChildren().addAll(newStudentProfile, studentProfiles, generateReports, createProgLang, homePage);
         buttonList.setSpacing(30);
         buttonList.setAlignment(Pos.CENTER);
 
@@ -139,14 +145,27 @@ public class Main extends Application {
     public void openStudentFormPage() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/cs151/application/student-form.fxml"));
-            Scene scene = new Scene(loader.load(), 600, 420);
+            Scene scene = new Scene(loader.load(), 800, 500);
             home.setScene(scene);
             home.setTitle("Define Student Profile");
-
-
         } catch (Exception ex) {
             ex.printStackTrace();
-            System.err.println("Error loading Student Profile page: " + ex.getMessage());
+            System.err.println("Error loading New Student Profile page: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * Opens the List of Students Page with FXML
+     */
+    public void openStudentsListPage() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/cs151/application/student-list.fxml"));
+            Scene scene = new Scene(loader.load(), 800, 500);
+            home.setScene(scene);
+            home.setTitle("Student Profiles");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.err.println("Error loading Student Profiles page: " + ex.getMessage());
         }
     }
 

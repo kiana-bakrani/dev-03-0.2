@@ -2,8 +2,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <VBox spacing="12" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="cs151.application.StudentFormController" prefWidth="600" prefHeight="420">
-    <Label text="Define Student Profile" style="-fx-font-size:18;" />
+      fx:controller="cs151.application.StudentFormController" prefWidth="800" prefHeight="500">
+    <Label text="Define Student Profile" style="-fx-font-size:18;"/>
     <GridPane hgap="10" vgap="10">
         <columnConstraints>
             <ColumnConstraints percentWidth="30"/>

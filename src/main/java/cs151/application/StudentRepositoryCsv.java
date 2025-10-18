@@ -4,6 +4,9 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 public class StudentRepositoryCsv {
     private static final String FILE_PATH = "data/students.csv";
 
@@ -14,8 +17,8 @@ public class StudentRepositoryCsv {
             writer.newLine();
         }
     }
-    public List<Student> loadAll() throws IOException {
-        List<Student> students = new ArrayList<>();
+    public ObservableList<Student> loadAll() throws IOException {
+        ObservableList<Student> students = FXCollections.observableArrayList();
         Path path = Paths.get(FILE_PATH);
         if (!Files.exists(path)) return students;
 
@@ -37,7 +40,6 @@ public class StudentRepositoryCsv {
                 String.join("|", s.getProgrammingLanguages()),
                 String.join("|", s.getDatabases()),
                 s.getPreferredRole(),
-                Boolean.toString(s.isWhitelist()),
                 Boolean.toString(s.isBlacklist())
         );
     }
@@ -52,8 +54,7 @@ public class StudentRepositoryCsv {
         s.setProgrammingLanguages(Arrays.asList(parts[4].split("\\|")));
         s.setDatabases(Arrays.asList(parts[5].split("\\|")));
         s.setPreferredRole(parts[6]);
-        s.setWhitelist(Boolean.parseBoolean(parts[7]));
-        s.setBlacklist(Boolean.parseBoolean(parts[8]));
+        s.setBlacklist(Boolean.parseBoolean(parts[7]));
         return s;
     }
 }
