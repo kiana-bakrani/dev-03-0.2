@@ -1,5 +1,6 @@
 package cs151.application;
 
+import javafx.collections.*;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
