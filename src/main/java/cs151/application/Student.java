@@ -24,7 +24,7 @@ public class Student {
     public Student() {}
     // Constructor
     public Student(String fullName, String academicStatus, boolean employed, String jobDetails,
-                   List<String> programmingLanguages, List<String> databases, String preferredRole,
+                   List<String> programmingLanguages, List<String> databases, List<String> comments, String preferredRole,
                    boolean blacklist) {
         this.fullName = new SimpleStringProperty();
         this.fullName.set(fullName);
@@ -52,6 +52,14 @@ public class Student {
         database.set(sb.toString());
         this.preferredRole = new SimpleStringProperty();
         this.preferredRole.set(preferredRole);
+        this.comments = comments;
+        sb = new StringBuilder();
+        for (int i = 0; i < comments.size(); i++){
+            if(i==comments.size()-1){sb.append(comments.get(i));}
+            else{sb.append(comments.get(i)+", ");}
+        }
+        comment = new SimpleStringProperty();
+        comment.set(sb.toString());
         this.blacklist = new SimpleStringProperty();
         this.blacklist.set(blacklist+"");
     }
@@ -115,9 +123,28 @@ public class Student {
     }
 
     public List<String> getComments() { return comments; }
-    public void addComment(String comment) {
-        this.comments.add(LocalDate.now() + " - " + comment);
+    public void addComment(String com) {
+        if(comments==null) {comments = new ArrayList<String>();}
+        comments.add(LocalDate.now() + " - " + com);
+        if(comment==null) {comment = new SimpleStringProperty(this, "comment");}
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < comments.size(); i++){
+            if(i==comments.size()-1){sb.append(comments.get(i));}
+            else{sb.append(comments.get(i)+"\n\n");}
+        }
+        comment.set(sb.toString());
     }
+    public void setComments(List<String> comments) {
+        this.comments = comments;
+        if (comment == null) {comment = new SimpleStringProperty(this, "comment");}
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < this.comments.size(); i++){
+            if(i==this.comments.size()-1){sb.append(this.comments.get(i));}
+            else{sb.append(this.comments.get(i)+"\n\n");}
+        }
+        comment.set(sb.toString());
+    }
+    public String getComment() {return comment.get();}
 
     public boolean isBlacklist() { return blacklist.get().equals("true"); }
     public void setBlacklist(boolean blacklist) { 

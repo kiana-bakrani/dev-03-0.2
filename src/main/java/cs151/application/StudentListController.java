@@ -22,6 +22,7 @@ public class StudentListController {
     @FXML private TableColumn<Student, String> DatabasesColumn;
     @FXML private TableColumn<Student, String> LanguagesColumn;
     @FXML private TableColumn<Student, String> BlackListColumn;
+    @FXML private TableColumn<Student, String> CommentsColumn;
     @FXML private Button backBtn;
 
     private final StudentRepositoryCsv repo = new StudentRepositoryCsv();
@@ -41,6 +42,7 @@ public class StudentListController {
         // Display strings for lists
         LanguagesColumn.setCellValueFactory(new PropertyValueFactory<>("progLang"));
         DatabasesColumn.setCellValueFactory(new PropertyValueFactory<>("database"));
+        CommentsColumn.setCellValueFactory(new PropertyValueFactory<>("comment"));
 
         ObservableList<Student> base = loadStudents();
 

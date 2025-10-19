@@ -75,7 +75,8 @@ public class StudentRepositoryCsv {
                 joinList(s.getProgrammingLanguages()),
                 joinList(s.getDatabases()),
                 safe(s.getPreferredRole()),
-                Boolean.toString(s.isBlacklist())
+                Boolean.toString(s.isBlacklist()),
+                joinList(s.getComments())
         );
     }
 
@@ -107,6 +108,13 @@ public class StudentRepositoryCsv {
 
             s.setPreferredRole(parts[6]);
             s.setBlacklist(Boolean.parseBoolean(parts[7]));
+
+            List<String> cmts = parts[8].isEmpty()
+                    ? new ArrayList<>()
+                    : new ArrayList<>(Arrays.asList(parts[8].split("\\|", -1)));
+            cmts.removeIf(x -> x == null || x.isBlank());
+            s.setComments(cmts);
+
             return s;
         } catch (Exception ex) {
             System.err.println("Skipping row (parse error): '" + line + "' -> " + ex.getMessage());
