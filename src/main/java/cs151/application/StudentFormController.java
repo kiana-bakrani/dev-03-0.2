@@ -111,7 +111,7 @@ public class StudentFormController {
             s.setFullName(name);
             s.setAcademicStatus(statusCombo.getValue());
             s.setEmployed(employed);
-            s.setJobDetails(jobDetailsField.getText() == null ? "" : jobDetailsField.getText().trim());
+            s.setJobDetails(jobDetailsField.getText() == null ? "N/A" : jobDetailsField.getText().trim());
             List<String> selectedLangs = new ArrayList<>();
             for (Node n : languagesBox.getChildren()) {
                 if (n instanceof CheckBox cb && cb.isSelected()) {

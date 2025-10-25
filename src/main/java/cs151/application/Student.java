@@ -90,6 +90,10 @@ public class Student {
     public String getJobDetails() { return jobDetails.get(); }
     public void setJobDetails(String jobDetails) {
         if(this.jobDetails==null) {this.jobDetails=new SimpleStringProperty(this, "jobDetails");}
+
+        // If Job Details field is empty, it will be "N/A"
+        if(jobDetails==null || jobDetails.equals("")) {this.jobDetails.set("N/A");return;}
+        
         this.jobDetails.set(jobDetails);
     }
 
@@ -97,6 +101,10 @@ public class Student {
     public void setProgrammingLanguages(List<String> programmingLanguages) { 
         this.programmingLanguages = programmingLanguages;
         if(progLangs == null) {progLangs = new SimpleStringProperty(this, "progLang");}
+
+        // Programming Languages Field will be "N/A" if empty
+        if(programmingLanguages==null||programmingLanguages.size()==0) {progLangs.set("N/A");return;}
+
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < programmingLanguages.size(); i++){
             if(i==programmingLanguages.size()-1){sb.append(programmingLanguages.get(i));}
@@ -110,6 +118,10 @@ public class Student {
     public void setDatabases(List<String> databases) {
         this.databases = databases;
         if(database == null) {database = new SimpleStringProperty(this, "database");}
+
+        // Databases field will be "N/A" if empty
+        if(databases==null||databases.size()==0) {database.set("N/A");return;}
+
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < databases.size(); i++){
             if(i==databases.size()-1){sb.append(databases.get(i));}
@@ -140,6 +152,10 @@ public class Student {
     public void setComments(List<String> comments) {
         this.comments = comments;
         if (comment == null) {comment = new SimpleStringProperty(this, "comment");}
+
+        // Comments Field will be "N/A" if it is empty
+        if (comments==null||comments.size()==0) {comment.set("N/A");return;}
+
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < this.comments.size(); i++){
             if(i==this.comments.size()-1){sb.append(this.comments.get(i));}

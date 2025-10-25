@@ -17,6 +17,41 @@ public class StudentRepositoryCsv {
         }
     }
 
+    // Loads the students with the search string in the student's section category
+    public List<Student> loadSomeStudents(String section, String search) throws IOException {
+        // Setting up some variables
+        int category;
+        if(section.equals("Name")) {category=0;}
+        else if (section.equals("Employment")) {category = 1;}
+        else if (section.equals("Job Details")) {category = 2;}
+        else if (section.equals("Academic Status")) {category = 3;}
+        else if (section.equals("Preferred Role")) {category = 4;}
+        else if (section.equals("Databases")) {category = 5;}
+        else if (section.equals("Languages")) {category = 6;}
+        else if (section.equals("Whitelist")) {category = 7;}
+        else if (section.equals("Blacklist")) {category = 8;}
+        else if (section.equals("Comments")) {category = 9;}
+        else {return new ArrayList<Student>();}
+        search = search.toLowerCase();
+        List<Student> students = loadAll();
+
+        // Check each student based on if that category has the search string
+        for (int i = students.size()-1; i>=0; i--) {
+            if (category==0) {if (students.get(i).getFullName().toLowerCase().indexOf(search) == -1) {students.remove(i);}}
+            else if (category==1) {if (students.get(i).getEmployment().toLowerCase().indexOf(search) == -1) {students.remove(i);}}
+            else if (category==2) {if (students.get(i).getJobDetails().toLowerCase().indexOf(search) == -1) {students.remove(i);}}
+            else if (category==3) {if (students.get(i).getAcademicStatus().toLowerCase().indexOf(search) == -1) {students.remove(i);}}
+            else if (category==4) {if (students.get(i).getPreferredRole().toLowerCase().indexOf(search) == -1) {students.remove(i);}}
+            else if (category==5) {if (students.get(i).getDatabase().toLowerCase().indexOf(search) == -1) {students.remove(i);}}
+            else if (category==6) {if (students.get(i).getProgLang().toLowerCase().indexOf(search) == -1) {students.remove(i);}}
+            else if (category==7) {if (students.get(i).getWhiteList().toLowerCase().indexOf(search) == -1) {students.remove(i);}}
+            else if (category==8) {if (students.get(i).getBlackList().toLowerCase().indexOf(search) == -1) {students.remove(i);}}
+            else if (category==9) {if (students.get(i).getComment().toLowerCase().indexOf(search) == -1) {students.remove(i);}}
+            else {System.out.println("Invalid Category");return null;}
+        }
+        return students;
+    }
+
     /** Loads all students. Safe with empty files and skips bad lines. */
     public List<Student> loadAll() throws IOException {
         ensureDataFile();
@@ -64,8 +99,8 @@ public class StudentRepositoryCsv {
                 .collect(Collectors.joining("|"));       // store lists as pipe-separated
     }
 
-    // CSV format (8 fields):
-    // 0 name, 1 status, 2 employed, 3 job, 4 langs(|), 5 dbs(|), 6 role, 7 blacklist
+    // CSV format (10 fields):
+    // 0 name, 1 status, 2 employed, 3 job, 4 langs(|), 5 dbs(|), 6 role, 7 whitelist, 8 blacklist, 9 comments
     private String toCsv(Student s) {
         return String.join(",",
                 safe(s.getFullName()),
