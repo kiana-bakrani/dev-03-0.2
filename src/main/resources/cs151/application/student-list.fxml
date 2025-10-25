@@ -6,7 +6,13 @@
 <?import javafx.scene.paint.*?>
 <VBox spacing="12" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
       fx:controller="cs151.application.StudentListController" prefWidth="800" prefHeight="500">
-    <Label text="Student Profiles" style="-fx-font-size:18;" />
+    <HBox spacing="165" prefWidth="800" prefHeight="25">
+        <Label text="Student Profiles" style="-fx-font-size:18;" />
+        <HBox spacing="15" prefWidth="500" prefHeight="25">
+            <ComboBox fx:id="searchCategory" prefWidth="100"/>
+            <TextField fx:id="searchBar" prefWidth="400"/>
+        </HBox>
+    </HBox>
     <TableView editable="false" fx:id="StudentsList">
         <columns>
             <TableColumn prefWidth="100" text="Name" fx:id="NameColumn"/>
@@ -23,7 +29,5 @@
         
     </TableView>
 
-    <HBox spacing="10">
-        <Button fx:id="backBtn" text="Back"/>
-    </HBox>
+    <Button fx:id="backBtn" text="Back"/>
 </VBox>
