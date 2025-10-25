@@ -6,10 +6,9 @@
 <?import javafx.scene.paint.*?>
 <VBox spacing="12" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
       fx:controller="cs151.application.StudentListController" prefWidth="800" prefHeight="500">
-    <HBox spacing="90" prefWidth="800" prefHeight="25">
+    <HBox spacing="250" prefWidth="800" prefHeight="25">
         <Label text="Student Profiles" style="-fx-font-size:18;" />
-        <HBox spacing="10" prefWidth="580" prefHeight="25">
-            <ComboBox fx:id="searchCategory" prefWidth="150"/>
+        <HBox spacing="10" prefWidth="420" prefHeight="25">
             <TextField fx:id="searchBar" prefWidth="350"/>
             <Button fx:id="searchButton" text="Search"/>
         </HBox>

@@ -23,7 +23,6 @@ public class StudentListController {
     @FXML private TableColumn<Student, String> WhiteListColumn;
     @FXML private TableColumn<Student, String> BlackListColumn;
     @FXML private TableColumn<Student, String> CommentsColumn;
-    @FXML private ComboBox<String> searchCategory;
     @FXML private TextField searchBar;
     @FXML private Button searchButton;
     @FXML private Button backBtn;
@@ -33,12 +32,6 @@ public class StudentListController {
 
     @FXML
     public void initialize() {
-        // Initialize the ComboBox
-        searchCategory.setItems(FXCollections.observableArrayList("Name","Employment",
-        "Job Details","Academic Status","Preferred Role","Databases","Languages","Whitelist",
-        "Blacklist","Comments"));
-        searchCategory.setPromptText("Search Category");
-        
         // Initialize the Search Bar
         searchBar.setPromptText("Search");
         searchButton.setOnAction(e -> onSearch());
@@ -91,12 +84,11 @@ public class StudentListController {
 
     private void onSearch() {
         // Base cases
-        if(searchCategory.getValue()==null) {statusLabel.setText("Please Select a Search Category");return;}
         if(searchBar.getText()==null||searchBar.getText().equals("")) {statusLabel.setText("No Search Conditions");setUpStudentsList();return;}
         
         try {
             // Generate List of Students that match the search conditions
-            List<Student> temp = repo.loadSomeStudents(searchCategory.getValue(), searchBar.getText());
+            List<Student> temp = repo.loadSomeStudents(searchBar.getText());
             ObservableList<Student> newStudentList = FXCollections.observableArrayList(temp);
             StudentsList.setItems(newStudentList);
         } catch (IOException e) {
