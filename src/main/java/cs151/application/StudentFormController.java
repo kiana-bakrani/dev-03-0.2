@@ -90,11 +90,15 @@ public class StudentFormController {
                 return;
             }
 
-            // Require exactly one of WL/BL (your earlier intent)
-            if (!whitelistCheck.isSelected() && !blacklistCheck.isSelected()) {
-                statusLabel.setText("Select Whitelist or Blacklist.");
-                return;
-            }
+
+                        // Got rid of this one because I think he said we need to have 
+                        // both of them as variables, which probably means we can have
+                        // as both unselected and be fine.
+            // // Require exactly one of WL/BL (your earlier intent)
+            // if (!whitelistCheck.isSelected() && !blacklistCheck.isSelected()) {
+            //     statusLabel.setText("Select Whitelist or Blacklist.");
+            //     return;
+            // }
 
             // Duplicate prevention
             if (repo.existsByFullNameTrimmedIgnoreCase(name)) {
@@ -128,6 +132,7 @@ public class StudentFormController {
             s.setPreferredRole(roleCombo.getValue());
 
             // ✅ Save blacklist correctly (whitelist => blacklist=false)
+            s.setWhiteList(whitelistCheck.isSelected());
             s.setBlacklist(blacklistCheck.isSelected());
 
             if (commentArea.getText() != null && !commentArea.getText().isBlank()) {

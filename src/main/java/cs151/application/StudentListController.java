@@ -21,6 +21,7 @@ public class StudentListController {
     @FXML private TableColumn<Student, String> RoleColumn;
     @FXML private TableColumn<Student, String> DatabasesColumn;
     @FXML private TableColumn<Student, String> LanguagesColumn;
+    @FXML private TableColumn<Student, String> WhiteListColumn;
     @FXML private TableColumn<Student, String> BlackListColumn;
     @FXML private TableColumn<Student, String> CommentsColumn;
     @FXML private Button backBtn;
@@ -38,6 +39,7 @@ public class StudentListController {
         // "true"/"false" string fields
         EmploymentColumn.setCellValueFactory(new PropertyValueFactory<>("employment"));
         BlackListColumn.setCellValueFactory(new PropertyValueFactory<>("blackList"));
+        WhiteListColumn.setCellValueFactory(new PropertyValueFactory<>("whiteList"));
 
         // Display strings for lists
         LanguagesColumn.setCellValueFactory(new PropertyValueFactory<>("progLang"));

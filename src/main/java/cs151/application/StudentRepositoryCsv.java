@@ -75,6 +75,7 @@ public class StudentRepositoryCsv {
                 joinList(s.getProgrammingLanguages()),
                 joinList(s.getDatabases()),
                 safe(s.getPreferredRole()),
+                Boolean.toString(s.isWhiteList()),
                 Boolean.toString(s.isBlacklist()),
                 joinList(s.getComments())
         );
@@ -107,11 +108,12 @@ public class StudentRepositoryCsv {
             s.setDatabases(dbs);
 
             s.setPreferredRole(parts[6]);
-            s.setBlacklist(Boolean.parseBoolean(parts[7]));
+            s.setWhiteList(Boolean.parseBoolean(parts[7]));
+            s.setBlacklist(Boolean.parseBoolean(parts[8]));
 
-            List<String> cmts = parts[8].isEmpty()
+            List<String> cmts = parts[9].isEmpty()
                     ? new ArrayList<>()
-                    : new ArrayList<>(Arrays.asList(parts[8].split("\\|", -1)));
+                    : new ArrayList<>(Arrays.asList(parts[9].split("\\|", -1)));
             cmts.removeIf(x -> x == null || x.isBlank());
             s.setComments(cmts);
 

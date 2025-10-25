@@ -16,6 +16,7 @@
             <TableColumn prefWidth="100" text="Role" fx:id="RoleColumn"/>
             <TableColumn prefWidth="200" text="Databases" fx:id="DatabasesColumn"/>
             <TableColumn prefWidth="200" text="Languages" fx:id="LanguagesColumn"/>
+            <TableColumn prefWidth="100" text="WhiteList" fx:id="WhiteListColumn"/>
             <TableColumn prefWidth="100" text="BlackList" fx:id="BlackListColumn"/>
             <TableColumn prefWidth="400" text="Comments" fx:id="CommentsColumn"/>
         </columns>

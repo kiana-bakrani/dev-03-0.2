@@ -20,12 +20,13 @@ public class Student {
     private List<String> comments = new ArrayList<>();
     private StringProperty comment;
     private StringProperty blacklist;
+    private StringProperty whiteList;
 
     public Student() {}
     // Constructor
     public Student(String fullName, String academicStatus, boolean employed, String jobDetails,
                    List<String> programmingLanguages, List<String> databases, List<String> comments, String preferredRole,
-                   boolean blacklist) {
+                   boolean blacklist, boolean whiteList) {
         this.fullName = new SimpleStringProperty();
         this.fullName.set(fullName);
         this.academicStatus =new SimpleStringProperty();
@@ -62,6 +63,8 @@ public class Student {
         comment.set(sb.toString());
         this.blacklist = new SimpleStringProperty();
         this.blacklist.set(blacklist+"");
+        this.whiteList = new SimpleStringProperty();
+        this.whiteList.set(whiteList+"");
     }
 
     // Getters and setters
@@ -152,4 +155,12 @@ public class Student {
         this.blacklist.set(blacklist+"");
     }
     public String getBlackList() {return blacklist.get();}
+
+    
+    public boolean isWhiteList() { return whiteList.get().equals("true"); }
+    public void setWhiteList(boolean whiteList) { 
+        if(this.whiteList==null) {this.whiteList=new SimpleStringProperty(this, "whiteList");}
+        this.whiteList.set(whiteList+"");
+    }
+    public String getWhiteList() {return whiteList.get();}
 }
