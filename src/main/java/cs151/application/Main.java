@@ -68,7 +68,7 @@ public class Main extends Application {
         Rectangle background = new Rectangle(180, 315, Color.web("#d7ddfe"));
         VBox buttonList = new VBox();
         newStudentProfile = new Button("New Student Profile");
-        studentProfiles = new Button("View Student Profiles");
+        studentProfiles = new Button("View & Search Student Profiles");
         generateReports = new Button("Generate Reports");
         createProgLang = new Button("Define Programming\nLanguages");
         homePage = new Button("Home Page");
