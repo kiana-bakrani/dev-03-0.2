@@ -176,7 +176,7 @@ public class StudentRepositoryCsv {
         s1.setFullName("Harry Potter");
         s1.setAcademicStatus("Senior");
         s1.setEmployed(true);
-        s1.setJobDetails("Part-time SWE @ Hogwarts");
+        s1.setJobDetails("Part-time SWE");
         s1.setProgrammingLanguages(List.of("Java", "Python", "JavaScript"));
         s1.setDatabases(List.of("MySQL"));
         s1.setPreferredRole("Full-Stack");
