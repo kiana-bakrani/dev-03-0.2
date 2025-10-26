@@ -6,7 +6,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.Node;
 
-
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
@@ -23,6 +22,11 @@ public class StudentFormController {
 
     private final ToggleGroup employedGroup = new ToggleGroup();
     private final StudentRepositoryCsv repo = new StudentRepositoryCsv();
+
+    // --- edit-mode state ---
+    private boolean editing = false;
+    private String originalName = null;     // name used to locate/replace the original row
+    private Student editingStudent = null;  // original object (optional reference)
 
     @FXML
     public void initialize() {
@@ -47,15 +51,13 @@ public class StudentFormController {
             databasesBox.getChildren().add(cb);
         }
 
-
         // Languages (load from CSV)
         for (String lang : loadLanguages()) {
             CheckBox cb = new CheckBox(lang);
             languagesBox.getChildren().add(cb);
         }
 
-
-        // WL/BL mutual exclusivity
+        // WL/BL mutual exclusivity (still allow both off)
         whitelistCheck.selectedProperty().addListener((obs, oldV, on) -> { if (on) blacklistCheck.setSelected(false); });
         blacklistCheck.selectedProperty().addListener((obs, oldV, on) -> { if (on) whitelistCheck.setSelected(false); });
 
@@ -64,10 +66,70 @@ public class StudentFormController {
         backBtn.setOnAction(e -> goBack());
     }
 
+    // ----------------------------
+    // Public methods for EDIT mode
+    // ----------------------------
+    public void loadStudentForEdit(Student s) {
+        setEditingStudent(s);
+    }
+
+    public void setEditingStudent(Student s) {
+        if (s == null) return;
+        editing = true;
+        editingStudent = s;
+        originalName = s.getFullName();
+
+        // Prefill fields
+        fullNameField.setText(s.getFullName());
+        statusCombo.getSelectionModel().select(s.getAcademicStatus());
+
+        if (s.isEmployed()) {
+            employedYes.setSelected(true);
+            jobDetailsField.setDisable(false);
+        } else {
+            employedNo.setSelected(true);
+            jobDetailsField.setDisable(true);
+        }
+        jobDetailsField.setText(s.getJobDetails());
+
+        roleCombo.getSelectionModel().select(s.getPreferredRole());
+
+        // Prefill languages
+        setChecks(languagesBox, s.getProgrammingLanguages());
+
+        // Prefill databases
+        setChecks(databasesBox, s.getDatabases());
+
+        // Prefill WL/BL
+        whitelistCheck.setSelected(s.isWhiteList());
+        blacklistCheck.setSelected(s.isBlacklist());
+
+        // Optional: you can show most recent comment in the textarea if you want to edit/add,
+        // but keeping your current behavior (textarea used only to add a new comment on save).
+        statusLabel.setText("Editing: " + (originalName == null ? "" : originalName));
+        saveBtn.setText("Update");
+    }
+
+    // Utility: check/uncheck boxes in a VBox by matching text
+    private void setChecks(VBox box, List<String> selected) {
+        Set<String> target = new HashSet<>();
+        if (selected != null) {
+            for (String v : selected) {
+                if (v != null && !v.isBlank()) target.add(v.trim());
+            }
+        }
+        for (Node n : box.getChildren()) {
+            if (n instanceof CheckBox cb) {
+                cb.setSelected(target.contains(cb.getText()));
+            }
+        }
+    }
+
     private List<String> loadLanguages() {
         Path path = Paths.get("data/programming_languages.csv");
         if (!Files.exists(path)) return List.of();
         try {
+            // your current version skips the first line
             List<String> lines = Files.readAllLines(path);
             return lines.stream().skip(1).map(String::trim).filter(s -> !s.isEmpty()).toList();
         } catch (IOException e) {
@@ -90,62 +152,71 @@ public class StudentFormController {
                 return;
             }
 
-
-                        // Got rid of this one because I think he said we need to have 
-                        // both of them as variables, which probably means we can have
-                        // as both unselected and be fine.
-            // // Require exactly one of WL/BL (your earlier intent)
-            // if (!whitelistCheck.isSelected() && !blacklistCheck.isSelected()) {
-            //     statusLabel.setText("Select Whitelist or Blacklist.");
-            //     return;
-            // }
-
-            // Duplicate prevention
-            if (repo.existsByFullNameTrimmedIgnoreCase(name)) {
-                statusLabel.setText("Student already exists.");
-                return;
-            }
-
-            // Build Student
+            // Build Student from UI
             Student s = new Student();
             s.setFullName(name);
             s.setAcademicStatus(statusCombo.getValue());
             s.setEmployed(employed);
             s.setJobDetails(jobDetailsField.getText() == null ? "N/A" : jobDetailsField.getText().trim());
+
             List<String> selectedLangs = new ArrayList<>();
             for (Node n : languagesBox.getChildren()) {
-                if (n instanceof CheckBox cb && cb.isSelected()) {
-                    selectedLangs.add(cb.getText());
-                }
+                if (n instanceof CheckBox cb && cb.isSelected()) selectedLangs.add(cb.getText());
             }
-
             List<String> selectedDBs = new ArrayList<>();
             for (Node n : databasesBox.getChildren()) {
-                if (n instanceof CheckBox cb && cb.isSelected()) {
-                    selectedDBs.add(cb.getText());
-                }
+                if (n instanceof CheckBox cb && cb.isSelected()) selectedDBs.add(cb.getText());
             }
-
             s.setProgrammingLanguages(selectedLangs);
             s.setDatabases(selectedDBs);
-
             s.setPreferredRole(roleCombo.getValue());
-
-            // ✅ Save blacklist correctly (whitelist => blacklist=false)
             s.setWhiteList(whitelistCheck.isSelected());
             s.setBlacklist(blacklistCheck.isSelected());
 
             if (commentArea.getText() != null && !commentArea.getText().isBlank()) {
                 s.addComment(commentArea.getText().trim());
+            } else if (editing && editingStudent != null) {
+                // preserve existing comments when editing if none entered now
+                s.setComments(new ArrayList<>(editingStudent.getComments()));
             }
 
-            // Persist
-            repo.save(s);
-            statusLabel.setText("Saved ✔");
-            clearForm();
+            if (!editing) {
+                // --- CREATE flow (your existing behavior) ---
+                // Duplicate prevention
+                if (repo.existsByFullNameTrimmedIgnoreCase(name)) {
+                    statusLabel.setText("Student already exists.");
+                    return;
+                }
+                repo.save(s);
+                statusLabel.setText("Saved ✔");
+                clearForm();
+            } else {
+                // --- EDIT flow ---
+                boolean nameChanged = (originalName != null && !originalName.trim().equalsIgnoreCase(name));
+
+                if (nameChanged && repo.existsByFullNameTrimmedIgnoreCase(name)) {
+                    statusLabel.setText("Another student already uses that name.");
+                    return;
+                }
+
+                // Easiest robust approach: delete old row by original name, then save the new data.
+                // This avoids relying on a specific update signature and works with your CSV repo.
+                if (originalName != null && !originalName.isBlank()) {
+                    repo.deleteByFullNameIgnoreCase(originalName);
+                }
+                repo.save(s);
+
+                statusLabel.setText("Updated ✔");
+                // Optionally return to list or keep on form — sticking with current flow:
+                // just clear edit mode but keep fields if you want
+                originalName = s.getFullName();
+                editingStudent = s;
+                saveBtn.setText("Update");
+            }
+
         } catch (Exception ex) {
             ex.printStackTrace();
-            statusLabel.setText("Save failed: " + ex.getClass().getSimpleName());
+            statusLabel.setText((editing ? "Update" : "Save") + " failed: " + ex.getClass().getSimpleName());
         }
     }
 
@@ -166,8 +237,13 @@ public class StudentFormController {
         for (Node n : databasesBox.getChildren()) {
             if (n instanceof CheckBox cb) cb.setSelected(false);
         }
-    }
 
+        // reset edit state if you want a clean slate after save in create mode
+        if (!editing) {
+            originalName = null;
+            editingStudent = null;
+        }
+    }
 
     private void goBack() {
         Main.INSTANCE.openHomePage();

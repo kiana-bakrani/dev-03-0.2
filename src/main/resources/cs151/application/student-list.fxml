@@ -29,6 +29,7 @@
 
     <HBox spacing="10">
         <Button fx:id="deleteBtn" text="Delete" disable="true"/>
+        <Button fx:id="editBtn" text="Edit" disable="true"/>
         <Button text="Add Comment" onAction="#onAddComment"/>
         <Button fx:id="backBtn" text="Back"/>
         <Label fx:id="statusLabel"/>
