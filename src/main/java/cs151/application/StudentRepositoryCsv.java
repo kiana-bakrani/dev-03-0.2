@@ -8,7 +8,11 @@ import java.util.stream.Collectors;
 public class StudentRepositoryCsv {
     private static final String FILE_PATH = "data/students.csv";
 
-    // ---------- Public API ----------
+
+    // Public API
+
+
+    /** Append or create the CSV and add one student row. */
     public void save(Student s) throws IOException {
         ensureDataFile();
         try (BufferedWriter w = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
@@ -17,36 +21,39 @@ public class StudentRepositoryCsv {
         }
     }
 
-    // Loads the students with the search string in the student's section category
-    public List<Student> loadSomeStudents(String search) throws IOException {
-        // Setting up some variables
-        search = search.toLowerCase();
-        List<Student> students = loadAll();
-
-        // Check each student based on if that category has the search string
-        for (int i = students.size()-1; i>=0; i--) {
-            if (students.get(i).getFullName().toLowerCase().indexOf(search) != -1) {continue;}
-            if (students.get(i).getAcademicStatus().toLowerCase().indexOf(search) != -1) {continue;}
-            if (students.get(i).getDatabase().toLowerCase().indexOf(search) != -1) {continue;}
-            if (students.get(i).getProgLang().toLowerCase().indexOf(search) != -1) {continue;}
-            if (students.get(i).getPreferredRole().toLowerCase().indexOf(search) != -1) {continue;}
-            students.remove(i);
-        }
-        return students;
-    }
-
-    /** Loads all students. Safe with empty files and skips bad lines. */
+    /** Load all students. Safe with empty files and skips blank/malformed rows. */
     public List<Student> loadAll() throws IOException {
         ensureDataFile();
         List<Student> students = new ArrayList<>();
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(FILE_PATH))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                line = line.trim();
-                if (line.isEmpty()) continue;           // skip blank lines
-                Student s = fromCsv(line);
-                if (s != null) students.add(s);         // skip malformed rows
+                String t = line.trim();
+                if (t.isEmpty()) continue;             // skip blank lines
+                Student s = fromCsv(t);
+                if (s != null) students.add(s);        // skip malformed rows
             }
+        }
+        return students;
+    }
+
+    /**
+     * Simple search across a few string fields.
+     * Returns students whose name/status/db/langs/role contains the given term (case-insensitive).
+     */
+    public List<Student> loadSomeStudents(String search) throws IOException {
+        String q = search == null ? "" : search.toLowerCase();
+        if (q.isEmpty()) return loadAll();
+
+        List<Student> students = loadAll();
+        for (int i = students.size() - 1; i >= 0; i--) {
+            Student s = students.get(i);
+            if (containsIgnoreCase(s.getFullName(), q)) continue;
+            if (containsIgnoreCase(s.getAcademicStatus(), q)) continue;
+            if (containsIgnoreCase(s.getDatabase(), q)) continue;   // joined db string from model
+            if (containsIgnoreCase(s.getProgLang(), q)) continue;   // joined langs string from model
+            if (containsIgnoreCase(s.getPreferredRole(), q)) continue;
+            students.remove(i);
         }
         return students;
     }
@@ -62,15 +69,94 @@ public class StudentRepositoryCsv {
         return false;
     }
 
-    // ---------- Helpers ----------
+    /** Delete exactly one student by full name (case-insensitive). Returns true if a row was removed. */
+    public boolean deleteByFullNameIgnoreCase(String fullName) throws IOException {
+        if (fullName == null || fullName.trim().isEmpty()) return false;
+
+        ensureDataFile();
+        Path p = Paths.get(FILE_PATH);
+
+        List<String> kept = new ArrayList<>();
+        boolean deleted = false;
+
+        try (BufferedReader r = Files.newBufferedReader(p)) {
+            String line;
+            while ((line = r.readLine()) != null) {
+                String t = line.trim();
+                if (t.isEmpty()) continue;            // skip blank lines
+                Student s = fromCsv(t);
+                if (s == null) continue;              // skip malformed
+                String n = s.getFullName() == null ? "" : s.getFullName().trim();
+                if (n.equalsIgnoreCase(fullName.trim())) {
+                    deleted = true;                   // drop this row
+                } else {
+                    kept.add(t);
+                }
+            }
+        }
+
+        if (!deleted) return false;
+
+        // rewrite (tmp -> replace)
+        Path tmp = Paths.get(FILE_PATH + ".tmp");
+        try (BufferedWriter w = Files.newBufferedWriter(tmp)) {
+            for (String row : kept) {
+                w.write(row);
+                w.newLine();
+            }
+        }
+        Files.move(tmp, p, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+        return true;
+    }
+
+    /** Bulk delete by predicate; returns number of rows removed. */
+    public int deleteWhere(java.util.function.Predicate<Student> pred) throws IOException {
+        ensureDataFile();
+        Path p = Paths.get(FILE_PATH);
+
+        List<String> kept = new ArrayList<>();
+        int removed = 0;
+
+        try (BufferedReader r = Files.newBufferedReader(p)) {
+            String line;
+            while ((line = r.readLine()) != null) {
+                String t = line.trim();
+                if (t.isEmpty()) continue;
+                Student s = fromCsv(t);
+                if (s == null) continue;
+                if (pred.test(s)) {
+                    removed++;
+                } else {
+                    kept.add(t);
+                }
+            }
+        }
+
+        if (removed == 0) return 0;
+
+        Path tmp = Paths.get(FILE_PATH + ".tmp");
+        try (BufferedWriter w = Files.newBufferedWriter(tmp)) {
+            for (String row : kept) {
+                w.write(row);
+                w.newLine();
+            }
+        }
+        Files.move(tmp, p, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+        return removed;
+    }
+
+    // =========================
+    // Helpers
+    // =========================
+
     private void ensureDataFile() throws IOException {
         Files.createDirectories(Paths.get("data"));
         Path p = Paths.get(FILE_PATH);
-        if (!Files.exists(p)) Files.createFile(p); // 0-byte file is OK
+        if (!Files.exists(p)) Files.createFile(p); // 0-byte file is fine
     }
 
     private String safe(String v) {
-        return v == null ? "" : v.replace(",", " ").trim(); // strip commas to protect CSV
+        return v == null ? "" : v.replace(",", " ").trim(); // strip commas to keep CSV columns aligned
     }
 
     private String joinList(List<String> list) {
@@ -79,11 +165,21 @@ public class StudentRepositoryCsv {
                 .filter(Objects::nonNull)
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
-                .collect(Collectors.joining("|"));       // store lists as pipe-separated
+                .collect(Collectors.joining("|")); // store lists pipe-separated
     }
 
-    // CSV format (10 fields):
-    // 0 name, 1 status, 2 employed, 3 job, 4 langs(|), 5 dbs(|), 6 role, 7 whitelist, 8 blacklist, 9 comments
+    private boolean containsIgnoreCase(String hay, String needleLower) {
+        if (hay == null) return false;
+        return hay.toLowerCase().contains(needleLower);
+    }
+
+    // =========================
+    // CSV (10 columns)  — read/write
+    // =========================
+    // Indexes:
+    // 0 name, 1 status, 2 employed, 3 job,
+    // 4 langs(|), 5 dbs(|), 6 role, 7 whitelist, 8 blacklist, 9 comments(|)
+
     private String toCsv(Student s) {
         return String.join(",",
                 safe(s.getFullName()),
@@ -100,8 +196,8 @@ public class StudentRepositoryCsv {
     }
 
     private Student fromCsv(String line) {
-        String[] parts = line.split(",", -1);           // keep empty fields
-        if (parts.length < 8) {                          // guard against short rows
+        String[] parts = line.split(",", -1); // keep empty fields
+        if (parts.length < 10) {              // expect 10 columns
             System.err.println("Skipping malformed row: '" + line + "'");
             return null;
         }
@@ -112,7 +208,7 @@ public class StudentRepositoryCsv {
             s.setEmployed(Boolean.parseBoolean(parts[2]));
             s.setJobDetails(parts[3]);
 
-            // lists: empty -> []
+            // lists
             List<String> langs = parts[4].isEmpty()
                     ? new ArrayList<>()
                     : new ArrayList<>(Arrays.asList(parts[4].split("\\|", -1)));

@@ -9,9 +9,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public class StudentListController {
-    // variables from the FXML File
+    // FXML refs
     @FXML private TableView<Student> StudentsList;
     @FXML private TableColumn<Student, String> NameColumn;
     @FXML private TableColumn<Student, String> EmploymentColumn;
@@ -25,6 +26,7 @@ public class StudentListController {
     @FXML private TableColumn<Student, String> CommentsColumn;
     @FXML private TextField searchBar;
     @FXML private Button searchButton;
+    @FXML private Button deleteBtn;         // 👈 added
     @FXML private Button backBtn;
     @FXML private Label statusLabel;
 
@@ -32,35 +34,45 @@ public class StudentListController {
 
     @FXML
     public void initialize() {
-        // Initialize the Search Bar
+        // search UI
         searchBar.setPromptText("Search");
         searchButton.setOnAction(e -> onSearch());
+        // allow pressing Enter to search
+        searchBar.setOnAction(e -> onSearch());
 
-        // Match columns to Student getters
+        // map columns to Student getters (matches your Student class)
         NameColumn.setCellValueFactory(new PropertyValueFactory<>("fullName"));
         YearColumn.setCellValueFactory(new PropertyValueFactory<>("academicStatus"));
         WorkplaceColumn.setCellValueFactory(new PropertyValueFactory<>("jobDetails"));
         RoleColumn.setCellValueFactory(new PropertyValueFactory<>("preferredRole"));
+        EmploymentColumn.setCellValueFactory(new PropertyValueFactory<>("employment"));   // "true"/"false" string
+        BlackListColumn.setCellValueFactory(new PropertyValueFactory<>("blackList"));     // "true"/"false" string
+        WhiteListColumn.setCellValueFactory(new PropertyValueFactory<>("whiteList"));     // "true"/"false" string
+        LanguagesColumn.setCellValueFactory(new PropertyValueFactory<>("progLang"));      // joined string
+        DatabasesColumn.setCellValueFactory(new PropertyValueFactory<>("database"));      // joined string
+        CommentsColumn.setCellValueFactory(new PropertyValueFactory<>("comment"));        // joined string (if you expose it)
 
-        // "true"/"false" string fields
-        EmploymentColumn.setCellValueFactory(new PropertyValueFactory<>("employment"));
-        BlackListColumn.setCellValueFactory(new PropertyValueFactory<>("blackList"));
-        WhiteListColumn.setCellValueFactory(new PropertyValueFactory<>("whiteList"));
-
-        // Display strings for lists
-        LanguagesColumn.setCellValueFactory(new PropertyValueFactory<>("progLang"));
-        DatabasesColumn.setCellValueFactory(new PropertyValueFactory<>("database"));
-        CommentsColumn.setCellValueFactory(new PropertyValueFactory<>("comment"));
-
+        // setup table + initial data
         setUpStudentsList();
 
+        // delete button: enable only when a row is selected
+        deleteBtn.setDisable(true);
+        StudentsList.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, sel) -> {
+            deleteBtn.setDisable(sel == null);
+            if (statusLabel != null) statusLabel.setText(""); // clear any prior status
+        });
+        deleteBtn.setOnAction(e -> onDeleteSelected());
+
         backBtn.setOnAction(e -> Main.INSTANCE.openHomePage());
+
+        // optional: right-click context menu for delete
+        attachContextMenu();
     }
 
     private void setUpStudentsList() {
         ObservableList<Student> base = loadStudents();
 
-        // Sort A→Z by name
+        // A→Z by name, case-insensitive
         NameColumn.setComparator(String::compareToIgnoreCase);
         SortedList<Student> sorted = new SortedList<>(base);
         sorted.setComparator(Comparator.comparing(
@@ -72,28 +84,91 @@ public class StudentListController {
     }
 
     private ObservableList<Student> loadStudents() {
-        // Gets the list of students
         try {
             List<Student> all = repo.loadAll();
             return FXCollections.observableArrayList(all);
         } catch (IOException e) {
             e.printStackTrace();
+            if (statusLabel != null) statusLabel.setText("Failed to load students.");
             return FXCollections.observableArrayList();
         }
     }
 
     private void onSearch() {
-        // Base cases
-        if(searchBar.getText()==null||searchBar.getText().equals("")) {statusLabel.setText("No Search Conditions");setUpStudentsList();return;}
-        
+        if (searchBar.getText() == null || searchBar.getText().isBlank()) {
+            if (statusLabel != null) statusLabel.setText("No Search Conditions");
+            setUpStudentsList();
+            return;
+        }
         try {
-            // Generate List of Students that match the search conditions
             List<Student> temp = repo.loadSomeStudents(searchBar.getText());
             ObservableList<Student> newStudentList = FXCollections.observableArrayList(temp);
             StudentsList.setItems(newStudentList);
+            if (statusLabel != null) statusLabel.setText(temp.isEmpty() ? "No matches." : "Found " + temp.size());
         } catch (IOException e) {
-            System.out.println("Student Search Failed: ");
+            if (statusLabel != null) statusLabel.setText("Student Search Failed.");
             e.printStackTrace();
         }
+    }
+
+    // --- Delete handling ---
+
+    private void onDeleteSelected() {
+        Student sel = StudentsList.getSelectionModel().getSelectedItem();
+        if (sel == null) return;
+
+        String name = sel.getFullName() == null ? "(unknown)" : sel.getFullName();
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Delete Student");
+        confirm.setHeaderText("Delete \"" + name + "\"?");
+        confirm.setContentText("This will permanently remove the profile.");
+        Optional<ButtonType> res = confirm.showAndWait();
+        if (res.isEmpty() || res.get() != ButtonType.OK) return;
+
+        try {
+            boolean deleted = repo.deleteByFullNameIgnoreCase(name);
+            if (deleted) {
+                refreshTable();
+                if (statusLabel != null) statusLabel.setText("Deleted: " + name);
+            } else {
+                if (statusLabel != null) statusLabel.setText("Not found (already deleted?)");
+                // also refresh to reflect current file state
+                refreshTable();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Delete failed: " + ex.getClass().getSimpleName()).showAndWait();
+        }
+    }
+
+    /** Refreshes the table, preserving search if a query is present. */
+    private void refreshTable() {
+        if (searchBar.getText() != null && !searchBar.getText().isBlank()) {
+            onSearch(); // re-run current search
+        } else {
+            setUpStudentsList(); // reload everything with sorting
+        }
+        // keep selection cleared after refresh
+        StudentsList.getSelectionModel().clearSelection();
+        deleteBtn.setDisable(true);
+    }
+
+    // Optional: add a row context menu with "Delete"
+    private void attachContextMenu() {
+        ContextMenu menu = new ContextMenu();
+        MenuItem del = new MenuItem("Delete");
+        del.setOnAction(e -> onDeleteSelected());
+        menu.getItems().add(del);
+
+        StudentsList.setRowFactory(tv -> {
+            TableRow<Student> row = new TableRow<>();
+            row.contextMenuProperty().bind(
+                    javafx.beans.binding.Bindings.when(row.emptyProperty())
+                            .then((ContextMenu) null)
+                            .otherwise(menu)
+            );
+            return row;
+        });
     }
 }
