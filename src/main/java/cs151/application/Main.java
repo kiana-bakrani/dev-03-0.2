@@ -36,6 +36,13 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         this.home = stage;
+        // seed students if file is empty
+        try {
+            new StudentRepositoryCsv().seedFiveStudentsIfEmpty();
+        } catch (Exception se) {
+            se.printStackTrace();
+            // non-fatal; continue launch
+        }
         openHomePage();
     }
 
