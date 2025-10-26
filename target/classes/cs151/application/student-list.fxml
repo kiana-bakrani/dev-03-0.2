@@ -2,35 +2,34 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.paint.*?>
 <VBox spacing="12" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="cs151.application.StudentListController" prefWidth="800" prefHeight="500">
-    <HBox spacing="250" prefWidth="800" prefHeight="25">
+      fx:controller="cs151.application.StudentListController" prefWidth="1000" prefHeight="700">
+    <HBox spacing="20" prefWidth="1000" prefHeight="40">
         <Label text="Student Profiles" style="-fx-font-size:18;" />
-        <HBox spacing="10" prefWidth="420" prefHeight="25">
-            <TextField fx:id="searchBar" prefWidth="350"/>
+        <HBox spacing="10" prefWidth="500" prefHeight="40">
+            <TextField fx:id="searchBar" prefWidth="400"/>
             <Button fx:id="searchButton" text="Search"/>
         </HBox>
     </HBox>
-    <TableView editable="false" fx:id="StudentsList">
+
+    <TableView editable="false" fx:id="StudentsList" prefHeight="550">
         <columns>
-            <TableColumn prefWidth="100" text="Name" fx:id="NameColumn"/>
+            <TableColumn prefWidth="120" text="Name" fx:id="NameColumn"/>
             <TableColumn prefWidth="100" text="Employment" fx:id="EmploymentColumn"/>
-            <TableColumn prefWidth="100" text="Workplace" fx:id="WorkplaceColumn"/>
+            <TableColumn prefWidth="120" text="Workplace" fx:id="WorkplaceColumn"/>
             <TableColumn prefWidth="100" text="Year" fx:id="YearColumn"/>
-            <TableColumn prefWidth="100" text="Role" fx:id="RoleColumn"/>
+            <TableColumn prefWidth="120" text="Role" fx:id="RoleColumn"/>
             <TableColumn prefWidth="200" text="Databases" fx:id="DatabasesColumn"/>
             <TableColumn prefWidth="200" text="Languages" fx:id="LanguagesColumn"/>
             <TableColumn prefWidth="100" text="WhiteList" fx:id="WhiteListColumn"/>
             <TableColumn prefWidth="100" text="BlackList" fx:id="BlackListColumn"/>
-            <TableColumn prefWidth="400" text="Comments" fx:id="CommentsColumn"/>
+            <TableColumn prefWidth="300" text="Comments" fx:id="CommentsColumn"/>
         </columns>
-        
     </TableView>
 
     <HBox spacing="10">
         <Button fx:id="deleteBtn" text="Delete" disable="true"/>
+        <Button text="Add Comment" onAction="#onAddComment"/>
         <Button fx:id="backBtn" text="Back"/>
         <Label fx:id="statusLabel"/>
     </HBox>
