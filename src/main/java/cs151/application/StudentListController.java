@@ -30,11 +30,12 @@ public class StudentListController {
     @FXML private TextField searchBar;
     @FXML private Button searchButton;
     @FXML private Button deleteBtn;
+    @FXML private Button commentBtn;
     @FXML private Button editBtn;          // wired up now
     @FXML private Button backBtn;
     @FXML private Label statusLabel;
 
-    private final StudentRepositoryCsv repo = new StudentRepositoryCsv();
+    private final StudentRepositoryCsv repo = StudentRepositoryCsv.repo;
 
     @FXML
     public void initialize() {
@@ -58,15 +59,18 @@ public class StudentListController {
         // enable/disable Delete + Edit based on selection
         deleteBtn.setDisable(true);
         editBtn.setDisable(true);
+        commentBtn.setDisable(true);
         StudentsList.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, sel) -> {
             boolean none = (sel == null);
             deleteBtn.setDisable(none);
             editBtn.setDisable(none);
+            commentBtn.setDisable(none);
             if (statusLabel != null) statusLabel.setText("");
         });
 
         deleteBtn.setOnAction(e -> onDeleteSelected());
         editBtn.setOnAction(e -> onEditSelected());
+        commentBtn.setOnAction(e -> onEditComments());
 
         backBtn.setOnAction(e -> Main.INSTANCE.openHomePage());
 
@@ -169,6 +173,12 @@ public class StudentListController {
         }
     }
 
+    // For the comment Editor to let you know when to refresh the table
+    // This is probably bad code, but I don't know how else to make it work
+    public void finished() {
+        refreshTable();
+    }
+
     private void refreshTable() {
         if (searchBar.getText() != null && !searchBar.getText().isBlank()) onSearch();
         else setUpStudentsList();
@@ -201,30 +211,20 @@ public class StudentListController {
 
     // --- Add Comment feature (kept as-is) ---
     @FXML
-    private void onAddComment() {
-        Student selected = StudentsList.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            new Alert(Alert.AlertType.WARNING, "Please select a student first.").showAndWait();
-            return;
+    private void onEditComments() {
+        repo.setSelectedStudent(StudentsList.getSelectionModel().getSelectedItem());
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/cs151/application/student-comment.fxml"));
+            Scene scene = new Scene(loader.load(), 400, 500);
+            StudentCommentController controller = loader.getController();
+            Stage s = new Stage();
+            s.setScene(scene);
+            s.setTitle("Edit Comments");
+            s.show();
+            controller.setStage(s, this);
+        } catch(IOException e) {
+            e.printStackTrace();
+            System.out.println("Failed to load Comments: "+e.getMessage());
         }
-
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Add Comment");
-        dialog.setHeaderText("Add comment for: " + selected.getFullName());
-        dialog.setContentText("Enter comment:");
-
-        Optional<String> result = dialog.showAndWait();
-        result.ifPresent(comment -> {
-            if (!comment.isBlank()) {
-                selected.addComment(comment);
-                try {
-                    repo.updateStudent(selected); // your existing method
-                    refreshTable();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    new Alert(Alert.AlertType.ERROR, "Failed to save comment.").showAndWait();
-                }
-            }
-        });
     }
 }

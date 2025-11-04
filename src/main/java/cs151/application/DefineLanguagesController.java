@@ -110,7 +110,7 @@ public class DefineLanguagesController {
             });
         }
 
-
+        
         sortByName();
         table.sort();
     }

@@ -28,6 +28,8 @@ public class Main extends Application {
     private Button homePage;
     public static Main INSTANCE;
 
+    private final StudentRepositoryCsv repo = StudentRepositoryCsv.repo;
+
     @Override
     public void init() {
         INSTANCE = this;
@@ -38,7 +40,7 @@ public class Main extends Application {
         this.home = stage;
         // seed students if file is empty
         try {
-            new StudentRepositoryCsv().seedFiveStudentsIfEmpty();
+            repo.seedFiveStudentsIfEmpty();
         } catch (Exception se) {
             se.printStackTrace();
             // non-fatal; continue launch

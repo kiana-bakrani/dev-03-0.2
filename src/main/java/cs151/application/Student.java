@@ -149,6 +149,13 @@ public class Student {
         }
         comment.set(sb.toString());
     }
+    public boolean removeComment(String s) {
+        boolean removed = comments.remove(s);
+        if(removed) {
+            setComments(comments);
+        }
+        return removed;
+    }
     public void setComments(List<String> comments) {
         this.comments = comments;
         if (comment == null) {comment = new SimpleStringProperty(this, "comment");}

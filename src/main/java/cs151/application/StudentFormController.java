@@ -21,7 +21,7 @@ public class StudentFormController {
     @FXML private Label statusLabel;
 
     private final ToggleGroup employedGroup = new ToggleGroup();
-    private final StudentRepositoryCsv repo = new StudentRepositoryCsv();
+    private final StudentRepositoryCsv repo = StudentRepositoryCsv.repo;
 
     // --- edit-mode state ---
     private boolean editing = false;
