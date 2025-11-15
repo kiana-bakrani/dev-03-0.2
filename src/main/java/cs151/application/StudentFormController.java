@@ -1,14 +1,26 @@
 package cs151.application;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
 import javafx.scene.Node;
-
-import java.io.IOException;
-import java.nio.file.*;
-import java.util.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.VBox;
 
 public class StudentFormController {
     @FXML private TextField fullNameField, jobDetailsField;
@@ -129,7 +141,6 @@ public class StudentFormController {
         Path path = Paths.get("data/programming_languages.csv");
         if (!Files.exists(path)) return List.of();
         try {
-            // your current version skips the first line
             List<String> lines = Files.readAllLines(path);
             return lines.stream().skip(1).map(String::trim).filter(s -> !s.isEmpty()).toList();
         } catch (IOException e) {
