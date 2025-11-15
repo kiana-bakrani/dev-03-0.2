@@ -142,7 +142,13 @@ public class StudentFormController {
         if (!Files.exists(path)) return List.of();
         try {
             List<String> lines = Files.readAllLines(path);
-            return lines.stream().skip(1).map(String::trim).filter(s -> !s.isEmpty()).toList();
+            return lines.stream()
+                    .skip(1)
+                    .map(String::trim)
+                    .map(s -> s.replaceAll("^\"|\"$", ""))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .toList();
         } catch (IOException e) {
             if (statusLabel != null) statusLabel.setText("Could not load languages.");
             return List.of();
