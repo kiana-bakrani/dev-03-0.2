@@ -17,8 +17,6 @@ public class StudentCommentController {
     @FXML private ListView<String> CommentsList;
     @FXML private Button backBtn;
     @FXML private Button addBtn;
-    @FXML private Button deleteBtn;
-    @FXML private Button editBtn;
     @FXML private Button finishBtn;
     @FXML private Label statusLabel;
 
@@ -35,17 +33,6 @@ public class StudentCommentController {
         CommentsList.setItems(comments);
 
         addBtn.setOnAction(e -> onAdd());
-        deleteBtn.setOnAction(e -> {
-            selected.removeComment(CommentsList.getSelectionModel().getSelectedItem());
-            resetList();
-        });
-        editBtn.setOnAction(e -> onEdit());
-        CommentsList.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, sel) -> {
-            boolean none = (sel == null);
-            deleteBtn.setDisable(none);
-            editBtn.setDisable(none);
-            if (statusLabel != null) {statusLabel.setText("");}
-        });
     }
 
     private void onAdd() {
@@ -61,7 +48,7 @@ public class StudentCommentController {
         });
     }
 
-    @FXML
+    /*@FXML
     private void onEdit() {
         String sel = CommentsList.getSelectionModel().getSelectedItem();
         if (sel == null) {
@@ -81,7 +68,7 @@ public class StudentCommentController {
             selected.addComment(comment);
             resetList();
         });
-    }
+    } */
 
     private void resetList() {
         comments = FXCollections.observableArrayList(selected.getComments());

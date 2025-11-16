@@ -219,7 +219,7 @@ public class StudentListController {
             StudentCommentController controller = loader.getController();
             Stage s = new Stage();
             s.setScene(scene);
-            s.setTitle("Edit Comments");
+            s.setTitle("Add Comments");
             s.show();
             controller.setStage(s, this);
         } catch(IOException e) {
