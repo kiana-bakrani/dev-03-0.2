@@ -28,8 +28,8 @@
     </TableView>
 
     <HBox spacing="10">
-        <Button fx:id="deleteBtn" text="Delete" disable="true"/>
-        <Button fx:id="editBtn" text="Edit" disable="true"/>
+        <Button fx:id="deleteBtn" text="Delete Profile" disable="true"/>
+        <Button fx:id="editBtn" text="Edit Profile" disable="true"/>
         <Button fx:id="commentBtn" text="Edit Comments" disable="true"/>
         <Button fx:id="backBtn" text="Back"/>
         <Label fx:id="statusLabel"/>
