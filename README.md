@@ -1,7 +1,7 @@
 # Name of application: RateMyStudent
 
 # Version: 0.8
-1. Kiana Bakrani - handled submission
+1. Kiana Bakrani - updated and renamed edit comment and handled submission
 2. Aishwarya Krupashankar - testing and updated ReadME 
 3. Curtis Zhang - added the editing comments part
 4. Maili Malabey -fixed the bug so that pre-selected programming languages shows up when you edit the student profile 
