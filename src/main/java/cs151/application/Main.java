@@ -108,6 +108,9 @@ public class Main extends Application {
         // When user clicks "View Student Profiles"
         studentProfiles.setOnAction((ActionEvent e) -> openStudentsListPage());
 
+        // When user clicks "Generate Reports"
+        generateReports.setOnAction((ActionEvent e) -> openReportsPage());
+
         // Optional: Home button goes back to Home
         homePage.setOnAction((ActionEvent e) -> openHomePage());
 
@@ -175,6 +178,21 @@ public class Main extends Application {
         } catch (Exception ex) {
             ex.printStackTrace();
             System.err.println("Error loading Student Profiles page: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * Opens the Reports Page with FXML
+     */
+    public void openReportsPage() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/cs151/application/reports.fxml"));
+            Scene scene = new Scene(loader.load(), 800, 600);
+            home.setScene(scene);
+            home.setTitle("Reports");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.err.println("Error loading Reports page: " + ex.getMessage());
         }
     }
 
