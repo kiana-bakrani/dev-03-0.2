@@ -36,6 +36,8 @@ public class ReportsController {
     private Button blacklistBtn;
     @FXML
     private Button allStudentsBtn;
+    // Back Button
+    @FXML private Button backBtn;
 
     // list of all students
     private ObservableList<Student> students;
@@ -66,6 +68,9 @@ public class ReportsController {
         whitelistBtn.setOnAction(e -> showWhitelisted());
         blacklistBtn.setOnAction(e -> showBlacklisted());
         allStudentsBtn.setOnAction(e -> showAll());
+
+        // Set up Back button
+        backBtn.setOnAction(e -> Main.INSTANCE.openHomePage());
     }
 
 
@@ -85,8 +90,6 @@ public class ReportsController {
     private void showAll() {
         studentsTable.setItems(students);
     }
-
-
 }
     
 
