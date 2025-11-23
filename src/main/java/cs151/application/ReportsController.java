@@ -28,6 +28,7 @@ public class ReportsController {
     @FXML private Button whitelistBtn;
     @FXML private Button blacklistBtn;
     @FXML private Button allStudentsBtn;
+    @FXML private Button backBtn;
 
     private ObservableList<Student> students;
 
@@ -54,6 +55,9 @@ public class ReportsController {
         whitelistBtn.setOnAction(e -> showWhitelisted());
         blacklistBtn.setOnAction(e -> showBlacklisted());
         allStudentsBtn.setOnAction(e -> showAll());
+
+        // backBtn
+        backBtn.setOnAction(e -> Main.INSTANCE.openHomePage());
 
         // double-click -> open Student Profile (form on top, comments table on bottom)
         studentsTable.setRowFactory(tv -> {

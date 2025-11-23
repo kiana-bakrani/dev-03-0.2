@@ -19,24 +19,29 @@
             <TitledPane text="Student Profile" collapsible="false">
                 <content>
                     <GridPane hgap="16" vgap="12" style="-fx-padding: 12;">
-                        <Label text="First Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                        <TextField fx:id="firstNameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                        <Label text="Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <Label fx:id="NameLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-                        <Label text="Last Name:" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
-                        <TextField fx:id="lastNameField" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+                        <Label text="Academic Status:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <Label fx:id="StatusLabel" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                        <Label text="Email:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                        <TextField fx:id="emailField" GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.columnSpan="3"/>
+                        <Label text="Employed:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <Label fx:id="EmployedLabel" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-                        <Label text="Major:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                        <TextField fx:id="majorField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                        <Label text="Job Details:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <Label fx:id="JobLabel" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
-                        <Label text="Status:" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
-                        <TextField fx:id="statusField" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
+                        <Label text="Programming Languages:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <Label fx:id="ProgLangLabel" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
 
-                        <HBox spacing="8" alignment="CENTER_RIGHT" GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="4">
-                            <Button fx:id="saveBtn" text="Save"/>
-                        </HBox>
+                        <Label text="Databases:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                        <Label fx:id="DatabasesLabel" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+                        <Label text="Preferred Roles:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                        <Label fx:id="RoleLabel" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+                        
+                        <Label text="WhiteList/BlackList:" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+                        <Label fx:id="ListingLabel" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
                     </GridPane>
                 </content>
             </TitledPane>
@@ -44,12 +49,8 @@
             <!-- BOTTOM: Comments table -->
             <TitledPane text="Comments" collapsible="false" VBox.vgrow="ALWAYS">
                 <content>
-                    <TableView fx:id="commentsTable" prefHeight="360">
-                        <columns>
-                            <TableColumn fx:id="dateColumn" text="Date" prefWidth="140"/>
-                            <TableColumn fx:id="commentColumn" text="Comment" prefWidth="580"/>
-                        </columns>
-                    </TableView>
+                    <ListView fx:id="commentsView" prefHeight="360">
+                    </ListView>
                 </content>
             </TitledPane>
 

@@ -209,6 +209,25 @@ public class StudentListController {
         });
     }
 
+    private void openStudentProfileWindow(Student selected) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("StudentProfileView.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle(selected.getFullName() + " — Profile & Comments");
+            stage.setScene(new Scene(root));
+            stage.show();
+            
+            // Pass the selected student to the controller
+            StudentProfileController controller = loader.getController();
+            controller.setStudent(selected);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Unable to open profile window.").showAndWait();
+        }
+    }
+
     // --- Add Comment feature (kept as-is) ---
     @FXML
     private void onEditComments() {
