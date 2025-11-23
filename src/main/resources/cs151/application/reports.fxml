@@ -26,53 +26,6 @@
     <center>
         <TabPane tabClosingPolicy="UNAVAILABLE">
             
-            <!-- Tab 1: Summary Statistics -->
-            <Tab text="Summary">
-                <ScrollPane fitToWidth="true" style="-fx-control-inner-background: #f5f5f5;">
-                    <VBox spacing="20" style="-fx-padding: 15;">
-                        
-                        <!-- summary statistics: basic counts like total, employed, whitelist/blacklist -->
-                        <TitledPane text="Summary Statistics" collapsible="false">
-                            <GridPane hgap="20" vgap="15" style="-fx-padding: 10;">
-                                <Label text="Total Students:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                                <Label fx:id="totalStudentsLabel" text="0" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-                                
-                                <Label text="Employed:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                                <Label fx:id="employedLabel" text="0" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-                                
-                                <Label text="Unemployed:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                                <Label fx:id="unemployedLabel" text="0" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-                                
-                                <Label text="Whitelisted:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                                <Label fx:id="whitelistLabel" text="0" GridPane.rowIndex="3" GridPane.columnIndex="1" style="-fx-text-fill: green;"/>
-                                
-                                <Label text="Blacklisted:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                                <Label fx:id="blacklistLabel" text="0" GridPane.rowIndex="4" GridPane.columnIndex="1" style="-fx-text-fill: red;"/>
-                            </GridPane>
-                        </TitledPane>
-                        
-                        <!-- academic status distribution: shows counts per year/status -->
-                        <TitledPane text="Academic Status Distribution" collapsible="false">
-                            <GridPane hgap="20" vgap="10" style="-fx-padding: 10;" fx:id="statusGrid">
-                            </GridPane>
-                        </TitledPane>
-                        
-                        <!-- programming languages usage: top languages and counts -->
-                        <TitledPane text="Programming Languages Usage" collapsible="false">
-                            <GridPane hgap="20" vgap="10" style="-fx-padding: 10;" fx:id="languagesGrid">
-                            </GridPane>
-                        </TitledPane>
-                        
-                        <!-- preferred roles: shows role distribution -->
-                        <TitledPane text="Preferred Roles Distribution" collapsible="false">
-                            <GridPane hgap="20" vgap="10" style="-fx-padding: 10;" fx:id="rolesGrid">
-                            </GridPane>
-                        </TitledPane>
-                        
-                    </VBox>
-                </ScrollPane>
-            </Tab>
-            
             <!-- Tab 2: Whitelisted/Blacklisted Students -->
             <Tab text="Whitelist/Blacklist">
                 <VBox spacing="10" style="-fx-padding: 15;">
@@ -107,7 +60,6 @@
     <bottom>
         <HBox spacing="10" alignment="CENTER" style="-fx-padding: 15;">
             <Button fx:id="backBtn" text="Back" prefWidth="100"/>
-            <Button fx:id="refreshBtn" text="Refresh" prefWidth="100"/>
         </HBox>
     </bottom>
     
