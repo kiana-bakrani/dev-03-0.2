@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="cs151.application.StudentProfileController"
+            prefWidth="760" prefHeight="560">
+
+    <children>
+        <VBox spacing="12" style="-fx-padding: 16;"
+              AnchorPane.topAnchor="0.0"
+              AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0"
+              AnchorPane.rightAnchor="0.0">
+
+            <!-- TOP: Profile form -->
+            <TitledPane text="Student Profile" collapsible="false">
+                <content>
+                    <GridPane hgap="16" vgap="12" style="-fx-padding: 12;">
+                        <Label text="First Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="firstNameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Last Name:" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                        <TextField fx:id="lastNameField" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+
+                        <Label text="Email:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="emailField" GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.columnSpan="3"/>
+
+                        <Label text="Major:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="majorField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Status:" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+                        <TextField fx:id="statusField" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
+
+                        <HBox spacing="8" alignment="CENTER_RIGHT" GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="4">
+                            <Button fx:id="saveBtn" text="Save"/>
+                        </HBox>
+                    </GridPane>
+                </content>
+            </TitledPane>
+
+            <!-- BOTTOM: Comments table -->
+            <TitledPane text="Comments" collapsible="false" VBox.vgrow="ALWAYS">
+                <content>
+                    <TableView fx:id="commentsTable" prefHeight="360">
+                        <columns>
+                            <TableColumn fx:id="dateColumn" text="Date" prefWidth="140"/>
+                            <TableColumn fx:id="commentColumn" text="Comment" prefWidth="580"/>
+                        </columns>
+                    </TableView>
+                </content>
+            </TitledPane>
+
+        </VBox>
+    </children>
+</AnchorPane>
