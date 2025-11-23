@@ -1,7 +1,6 @@
 package cs151.application;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,15 +9,17 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
 public class StudentCommentController {
+
     @FXML private ListView<String> CommentsList;
     @FXML private Button backBtn;
     @FXML private Button addBtn;
     @FXML private Button finishBtn;
     @FXML private Label statusLabel;
+    @FXML private TextArea commentTextArea;
 
     private static final StudentRepositoryCsv repo = StudentRepositoryCsv.repo;
     private Stage stage;
@@ -28,7 +29,19 @@ public class StudentCommentController {
 
     @FXML
     public void initialize() {
+        // Get currently selected student from repository
         selected = repo.getSelectedStudent();
+
+        if (selected == null) {
+            comments = FXCollections.observableArrayList();
+            CommentsList.setItems(comments);
+            statusLabel.setText("No student selected.");
+            addBtn.setDisable(true);
+            finishBtn.setDisable(true);
+            return;
+        }
+
+        // Load existing comments for this student
         comments = FXCollections.observableArrayList(selected.getComments());
         CommentsList.setItems(comments);
 
@@ -36,58 +49,47 @@ public class StudentCommentController {
     }
 
     private void onAdd() {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Add Comment");
-        dialog.setHeaderText("Add Comment for "+selected.getFullName());
-        dialog.setContentText("Add a comment:");
+        String comment = commentTextArea.getText();
 
-        Optional<String> result = dialog.showAndWait();
-        result.ifPresent(comment -> {
-            selected.addComment(comment);
-            resetList();
-        });
-    }
-
-    /*@FXML
-    private void onEdit() {
-        String sel = CommentsList.getSelectionModel().getSelectedItem();
-        if (sel == null) {
-            new Alert(Alert.AlertType.WARNING, "Please select a comment first.").showAndWait();
+        if (comment == null || comment.trim().isEmpty()) {
+            new Alert(Alert.AlertType.WARNING, "Comment cannot be empty.").showAndWait();
             return;
         }
 
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Edit Comment");
-        dialog.setHeaderText("Edit Comment");
-        dialog.setContentText("Edit comment:");
-        dialog.getEditor().setText(sel);
-
-        Optional<String> result = dialog.showAndWait();
-        result.ifPresent(comment -> {
-            selected.removeComment(sel);
-            selected.addComment(comment);
-            resetList();
-        });
-    } */
+        // Just add whatever the user typed (no word-count restriction)
+        selected.addComment(comment.trim());
+        resetList();
+        commentTextArea.clear();
+        statusLabel.setText("Comment added.");
+    }
 
     private void resetList() {
-        comments = FXCollections.observableArrayList(selected.getComments());
-        CommentsList.setItems(comments);
+        comments.setAll(selected.getComments());
     }
 
     public void setStage(Stage s, StudentListController studentListController) {
         this.studentListController = studentListController;
         stage = s;
-        backBtn.setOnAction(e -> {stage.close();});
+
+        backBtn.setOnAction(e -> stage.close());
+
         finishBtn.setOnAction(e -> {
             try {
+                // Save comments back to the student and repository
                 selected.setComments(CommentsList.getItems());
                 repo.updateStudent(selected);
-                this.studentListController.finished();
+
+                if (this.studentListController != null) {
+                    this.studentListController.finished();
+                }
+
                 stage.close();
-            } catch(IOException ex) {
+            } catch (IOException ex) {
                 ex.printStackTrace();
-                System.out.println("Failed to save comments "+ex.getMessage());
+                new Alert(
+                        Alert.AlertType.ERROR,
+                        "Failed to save comments:\n" + ex.getMessage()
+                ).showAndWait();
             }
         });
     }
