@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.Button?>
+
+<VBox spacing="12"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="cs151.application.CommentFullViewController"
+      style="-fx-padding: 16;"
+      prefWidth="500" prefHeight="300">
+
+    <children>
+
+        <Label text="Full Comment" style="-fx-font-size: 18; -fx-font-weight: bold;" />
+
+        <TextArea fx:id="commentTextArea"
+                  editable="false"
+                  wrapText="true"
+                  prefRowCount="10" />
+
+        <HBox spacing="10">
+            <children>
+                <Button fx:id="closeBtn" text="Close" onAction="#onClose" />
+            </children>
+        </HBox>
+
+    </children>
+</VBox>

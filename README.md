@@ -1,5 +1,12 @@
 # Name of application: RateMyStudent
 
+
+# Version: 0.9
+1. Kiana Bakrani - implemented text area in add comment, double click/pop up for both row of students and comments, populated 6 students
+2. Aishwarya Krupashankar - worked on student profile page for the reports page
+3. Curtis Zhang -  added view student profiles page for the reports page, debugging the back button for the reports page
+4. Maili Malabey -  added generate reports with whitelist/blacklist options
+
 # Version: 0.8
 1. Kiana Bakrani - updated and renamed edit comment and handled submission
 2. Aishwarya Krupashankar - testing and updated ReadME 
