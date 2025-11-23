@@ -86,14 +86,14 @@ public class ReportsController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("StudentProfileView.fxml"));
             Parent root = loader.load();
 
-            // Pass the selected student to the controller
-            StudentProfileController controller = loader.getController();
-            controller.setStudent(selected);
-
             Stage stage = new Stage();
             stage.setTitle(selected.getFullName() + " — Profile & Comments");
             stage.setScene(new Scene(root));
             stage.show();
+            
+            // Pass the selected student to the controller
+            StudentProfileController controller = loader.getController();
+            controller.setStudent(selected);
         } catch (IOException ex) {
             ex.printStackTrace();
             new Alert(Alert.AlertType.ERROR, "Unable to open profile window.").showAndWait();
