@@ -5,11 +5,7 @@ import java.io.IOException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 public class StudentCommentController {
@@ -48,6 +44,7 @@ public class StudentCommentController {
         addBtn.setOnAction(e -> onAdd());
     }
 
+    /** Add a comment using the TextArea on the page (no popup). */
     private void onAdd() {
         String comment = commentTextArea.getText();
 
@@ -56,26 +53,26 @@ public class StudentCommentController {
             return;
         }
 
-        // Just add whatever the user typed (no word-count restriction)
         selected.addComment(comment.trim());
         resetList();
         commentTextArea.clear();
         statusLabel.setText("Comment added.");
     }
 
+    /** Refresh the ListView after adding comments. */
     private void resetList() {
         comments.setAll(selected.getComments());
     }
 
+    /** Called by StudentListController when opening this window. */
     public void setStage(Stage s, StudentListController studentListController) {
         this.studentListController = studentListController;
-        stage = s;
+        this.stage = s;
 
         backBtn.setOnAction(e -> stage.close());
 
         finishBtn.setOnAction(e -> {
             try {
-                // Save comments back to the student and repository
                 selected.setComments(CommentsList.getItems());
                 repo.updateStudent(selected);
 

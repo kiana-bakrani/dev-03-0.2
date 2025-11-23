@@ -9,7 +9,7 @@ public class StudentRepositoryCsv {
     private static final String FILE_PATH = "data/students.csv";
     private Student selectedStudent;
 
-    // Make this a singleton class
+    // Singleton instance
     public static StudentRepositoryCsv repo = new StudentRepositoryCsv();
 
     // Private constructor
@@ -19,8 +19,6 @@ public class StudentRepositoryCsv {
     // Public API
     // =========================
 
-    // This is for the Comments btw, this might not be the best way to do it
-    // but I don't know what better way there is to do it.
     /** Set the Selected Student */
     public void setSelectedStudent(Student s) { selectedStudent = s; }
 
@@ -159,7 +157,7 @@ public class StudentRepositoryCsv {
         return removed;
     }
 
-    /** --- NEW: update an existing student --- */
+    /** Update an existing student by full name. */
     public void updateStudent(Student updated) throws IOException {
         List<Student> all = loadAll();
         boolean found = false;
@@ -178,7 +176,8 @@ public class StudentRepositoryCsv {
 
         saveAll(all);
     }
-    /** --- NEW: seed starter data if file is empty --- */
+
+    /** Seed starter data if file is empty. */
     public void seedFiveStudentsIfEmpty() throws IOException {
         ensureDataFile();
         Path p = Paths.get(FILE_PATH);
@@ -197,7 +196,7 @@ public class StudentRepositoryCsv {
         s1.setPreferredRole("Full-Stack");
         s1.setWhiteList(true);
         s1.setBlacklist(false);
-        s1.addComment("Strong in Expecto Potronum.");
+        s1.addComment("Strong in Expecto Patronum.");
         seeds.add(s1);
 
         // Student 2
@@ -286,10 +285,7 @@ public class StudentRepositoryCsv {
         if (!Files.exists(p)) Files.createFile(p);
     }
 
-    private String safe(String v) {
-        return v == null ? "" : v.replace(",", " ").trim();
-    }
-
+    /** Join a list of strings with '|' for CSV storage. */
     private String joinList(List<String> list) {
         if (list == null || list.isEmpty()) return "";
         return list.stream()
@@ -304,53 +300,90 @@ public class StudentRepositoryCsv {
         return hay.toLowerCase().contains(needleLower);
     }
 
+    /** Quote a value for CSV and escape inner quotes. */
+    private String quote(String v) {
+        if (v == null) return "\"\"";
+        String escaped = v.replace("\"", "\"\"");
+        return "\"" + escaped + "\"";
+    }
+
+    /** Convert a Student to a single CSV line, safely handling commas in comments. */
     private String toCsv(Student s) {
         return String.join(",",
-                safe(s.getFullName()),
-                safe(s.getAcademicStatus()),
-                Boolean.toString(s.isEmployed()),
-                safe(s.getJobDetails()),
-                joinList(s.getProgrammingLanguages()),
-                joinList(s.getDatabases()),
-                safe(s.getPreferredRole()),
-                Boolean.toString(s.isWhiteList()),
-                Boolean.toString(s.isBlacklist()),
-                joinList(s.getComments())
+                quote(s.getFullName()),
+                quote(s.getAcademicStatus()),
+                quote(Boolean.toString(s.isEmployed())),
+                quote(s.getJobDetails()),
+                quote(joinList(s.getProgrammingLanguages())),
+                quote(joinList(s.getDatabases())),
+                quote(s.getPreferredRole()),
+                quote(Boolean.toString(s.isWhiteList())),
+                quote(Boolean.toString(s.isBlacklist())),
+                quote(joinList(s.getComments()))
         );
     }
 
+    /** Basic CSV parser that respects quotes and commas inside quoted fields. */
+    private List<String> parseCsvLine(String line) {
+        List<String> result = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        boolean inQuotes = false;
+
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+
+            if (c == '"') {
+                if (inQuotes && i + 1 < line.length() && line.charAt(i + 1) == '"') {
+                    // Escaped quote ""
+                    sb.append('"');
+                    i++;
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (c == ',' && !inQuotes) {
+                result.add(sb.toString());
+                sb.setLength(0);
+            } else {
+                sb.append(c);
+            }
+        }
+        result.add(sb.toString());
+        return result;
+    }
+
     private Student fromCsv(String line) {
-        String[] parts = line.split(",", -1);
-        if (parts.length < 10) {
+        List<String> parts = parseCsvLine(line);
+        if (parts.size() < 10) {
             System.err.println("Skipping malformed row: '" + line + "'");
             return null;
         }
+
         try {
             Student s = new Student();
-            s.setFullName(parts[0]);
-            s.setAcademicStatus(parts[1]);
-            s.setEmployed(Boolean.parseBoolean(parts[2]));
-            s.setJobDetails(parts[3]);
+            s.setFullName(parts.get(0));
+            s.setAcademicStatus(parts.get(1));
+            s.setEmployed(Boolean.parseBoolean(parts.get(2)));
+            s.setJobDetails(parts.get(3));
 
-            List<String> langs = parts[4].isEmpty()
+            List<String> langs = parts.get(4).isEmpty()
                     ? new ArrayList<>()
-                    : new ArrayList<>(Arrays.asList(parts[4].split("\\|", -1)));
+                    : new ArrayList<>(Arrays.asList(parts.get(4).split("\\|", -1)));
             langs.removeIf(x -> x == null || x.isBlank());
             s.setProgrammingLanguages(langs);
 
-            List<String> dbs = parts[5].isEmpty()
+            List<String> dbs = parts.get(5).isEmpty()
                     ? new ArrayList<>()
-                    : new ArrayList<>(Arrays.asList(parts[5].split("\\|", -1)));
+                    : new ArrayList<>(Arrays.asList(parts.get(5).split("\\|", -1)));
             dbs.removeIf(x -> x == null || x.isBlank());
             s.setDatabases(dbs);
 
-            s.setPreferredRole(parts[6]);
-            s.setWhiteList(Boolean.parseBoolean(parts[7]));
-            s.setBlacklist(Boolean.parseBoolean(parts[8]));
+            s.setPreferredRole(parts.get(6));
+            s.setWhiteList(Boolean.parseBoolean(parts.get(7)));
+            s.setBlacklist(Boolean.parseBoolean(parts.get(8)));
 
-            List<String> cmts = parts[9].isEmpty()
+            List<String> cmts = parts.get(9).isEmpty()
                     ? new ArrayList<>()
-                    : new ArrayList<>(Arrays.asList(parts[9].split("\\|", -1)));
+                    : new ArrayList<>(Arrays.asList(parts.get(9).split("\\|", -1)));
             cmts.removeIf(x -> x == null || x.isBlank());
             s.setComments(cmts);
 
